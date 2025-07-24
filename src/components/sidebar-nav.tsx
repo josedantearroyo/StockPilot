@@ -17,6 +17,7 @@ import {
   LayoutDashboard,
   Users,
   ClipboardPlus,
+  ShieldCheck,
 } from 'lucide-react';
 
 const links = [
@@ -41,6 +42,11 @@ const links = [
     icon: ClipboardPlus,
   },
   {
+    href: '/epp',
+    label: 'EPP Management',
+    icon: ShieldCheck,
+  },
+  {
     href: '/reports/discrepancy',
     label: 'Discrepancy Report',
     icon: FileBarChart2,
@@ -61,7 +67,7 @@ export function SidebarNav() {
             <SidebarMenuItem key={link.href}>
               <SidebarMenuButton
                 asChild
-                isActive={pathname === link.href}
+                isActive={pathname.startsWith(link.href) && (link.href !== '/' || pathname === '/')}
                 tooltip={link.label}
               >
                 <Link href={link.href}>
