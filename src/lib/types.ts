@@ -14,6 +14,7 @@ export interface Item {
   assignedTo?: string; // Employee ID
   assignmentDate?: string; // ISO date string
   changeHistory?: ChangeRecord[];
+  lastReviewDate?: string; // ISO date string for tools
 }
 
 export interface Employee {

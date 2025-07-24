@@ -18,6 +18,18 @@ import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { useToast } from '@/hooks/use-toast';
 import { Separator } from '@/components/ui/separator';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 
 export default function AssignmentsPage() {
   const [selectedEmployee, setSelectedEmployee] = useState<Employee | null>(null);
@@ -27,7 +39,7 @@ export default function AssignmentsPage() {
   const availableTools = inventory.filter(
     (item) => item.type === 'Herramienta' && item.status === 'Disponible'
   );
-  
+
   const handleEmployeeChange = (employeeId: string) => {
     const employee = employees.find((e) => e.id === employeeId) || null;
     setSelectedEmployee(employee);
@@ -61,8 +73,19 @@ export default function AssignmentsPage() {
       });
       return;
     }
+    
+    const assignmentDate = new Date().toISOString();
 
-    // This is where you would typically update your backend/database
+    itemsToAssign.forEach(itemId => {
+        const item = inventory.find(i => i.id === itemId);
+        if (item) {
+            item.assignedTo = selectedEmployee.id;
+            item.status = 'Asignado';
+            item.assignmentDate = assignmentDate;
+        }
+    });
+
+
     console.log(
       `Asignando ${itemsToAssign.join(', ')} a ${selectedEmployee.name}`
     );
@@ -72,13 +95,39 @@ export default function AssignmentsPage() {
       description: `${itemsToAssign.length} herramienta(s) asignada(s) a ${selectedEmployee.name}.`,
     });
 
-    // Reset selection
+    // Reset selection and force re-render
     setSelectedTools({});
+    setSelectedEmployee({...selectedEmployee});
   };
   
   const getAssignedItems = (employeeId: string): Item[] => {
     return inventory.filter(item => item.assignedTo === employeeId && item.type === 'Herramienta');
   }
+
+  const handleReviewSubmit = (itemId: string, status: 'Operativa' | 'Defectuosa') => {
+    const item = inventory.find(i => i.id === itemId);
+    if (!item) return;
+  
+    if (status === 'Defectuosa') {
+      item.status = 'En Mantenimiento';
+      delete item.assignedTo;
+      delete item.assignmentDate;
+      toast({
+        variant: 'destructive',
+        title: 'Herramienta Defectuosa',
+        description: `${item.name} ha sido marcada como defectuosa y enviada a mantenimiento.`,
+      });
+    } else {
+      item.lastReviewDate = new Date().toISOString();
+      toast({
+        title: 'Revisión Completada',
+        description: `${item.name} ha sido marcada como operativa.`,
+      });
+    }
+  
+    // Force re-render
+    setSelectedEmployee(prev => prev ? {...prev} : null);
+  };
   
   return (
     <div>
@@ -161,9 +210,43 @@ export default function AssignmentsPage() {
                             </div>
                             <div className="mt-2">
                                 <h5 className="font-medium text-sm">Herramientas</h5>
-                                <ul className="list-disc pl-5 text-sm text-muted-foreground">
+                                <ul className="list-disc pl-5 text-sm text-muted-foreground space-y-2 mt-2">
                                     {assigned.map(item => (
-                                        <li key={item.id}>{item.name}</li>
+                                        <li key={item.id} className="flex justify-between items-center">
+                                            <span>{item.name}</span>
+                                            <AlertDialog>
+                                                <AlertDialogTrigger asChild>
+                                                    <Button variant="outline" size="sm">Revisar</Button>
+                                                </AlertDialogTrigger>
+                                                <AlertDialogContent>
+                                                    <AlertDialogHeader>
+                                                        <AlertDialogTitle>Revisión de Herramienta: {item.name}</AlertDialogTitle>
+                                                        <AlertDialogDescription>
+                                                            Seleccione el estado actual de la herramienta. Si está defectuosa, se enviará a mantenimiento.
+                                                        </AlertDialogDescription>
+                                                    </AlertDialogHeader>
+                                                    <RadioGroup defaultValue="Operativa" id={`review-${item.id}`} className="my-4">
+                                                        <div className="flex items-center space-x-2">
+                                                            <RadioGroupItem value="Operativa" id={`op-${item.id}`} />
+                                                            <Label htmlFor={`op-${item.id}`}>Operativa</Label>
+                                                        </div>
+                                                        <div className="flex items-center space-x-2">
+                                                            <RadioGroupItem value="Defectuosa" id={`def-${item.id}`} />
+                                                            <Label htmlFor={`def-${item.id}`}>Defectuosa</Label>
+                                                        </div>
+                                                    </RadioGroup>
+                                                    <AlertDialogFooter>
+                                                        <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                                                        <AlertDialogAction onClick={() => {
+                                                            const status = (document.querySelector(`#review-${item.id} [aria-checked=true]`) as HTMLButtonElement)?.value as 'Operativa' | 'Defectuosa';
+                                                            handleReviewSubmit(item.id, status)
+                                                        }}>
+                                                            Guardar
+                                                        </AlertDialogAction>
+                                                    </AlertDialogFooter>
+                                                </AlertDialogContent>
+                                            </AlertDialog>
+                                        </li>
                                     ))}
                                 </ul>
                             </div>
