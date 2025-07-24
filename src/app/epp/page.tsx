@@ -4,7 +4,7 @@
 import { useState } from 'react';
 import { PageHeader } from '@/components/page-header';
 import { employees, inventory } from '@/lib/data';
-import type { Employee, Item } from '@/lib/types';
+import type { Employee, Item, ChangeRecord } from '@/lib/types';
 import {
   Select,
   SelectContent,
@@ -29,7 +29,53 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  DialogDescription,
+  DialogFooter,
+} from '@/components/ui/dialog';
 import { format } from 'date-fns';
+import { ScrollArea } from '@/components/ui/scroll-area';
+
+function HistoryModal({ history, itemName, employeeName }: { history: ChangeRecord[], itemName: string, employeeName: string }) {
+  return (
+    <Dialog>
+      <DialogTrigger asChild>
+        <Button variant="link" size="sm" className="h-7 px-2">Ver Historial</Button>
+      </DialogTrigger>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Historial de Cambios: {itemName}</DialogTitle>
+          <DialogDescription>
+            Mostrando el historial de cambios para {employeeName}.
+          </DialogDescription>
+        </DialogHeader>
+        <ScrollArea className="max-h-60">
+            <div className="space-y-2 pr-4">
+            {history && history.length > 0 ? (
+                <ul className="list-disc pl-5">
+                {history.map((record, index) => (
+                    <li key={index} className="text-sm">
+                    {format(new Date(record.date), 'dd/MM/yyyy HH:mm')}
+                    </li>
+                ))}
+                </ul>
+            ) : (
+                <p className="text-sm text-muted-foreground">No hay historial de cambios.</p>
+            )}
+            </div>
+        </ScrollArea>
+        <DialogFooter>
+            <Button onClick={(e) => (e.target as HTMLElement).closest('[role="dialog"]')?.querySelector<HTMLButtonElement>('[aria-label="Close"]')?.click()}>Cerrar</Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+}
 
 export default function EppManagementPage() {
   const [selectedEmployee, setSelectedEmployee] = useState<Employee | null>(null);
@@ -73,10 +119,21 @@ export default function EppManagementPage() {
       });
       return;
     }
+    
+    const assignmentDate = new Date().toISOString();
 
-    // This is where you would typically update your backend/database
+    itemsToAssign.forEach(itemId => {
+        const item = inventory.find(i => i.id === itemId);
+        if (item) {
+            item.assignedTo = selectedEmployee.id;
+            item.status = 'Asignado';
+            item.assignmentDate = assignmentDate;
+            item.changeHistory = [{ date: assignmentDate }];
+        }
+    });
+
     console.log(
-      `Asignando ${itemsToAssign.join(', ')} a ${selectedEmployee.name} en la fecha ${new Date().toISOString()}`
+      `Asignando ${itemsToAssign.join(', ')} a ${selectedEmployee.name} en la fecha ${assignmentDate}`
     );
 
     toast({
@@ -84,7 +141,8 @@ export default function EppManagementPage() {
       description: `${itemsToAssign.length} EPP(s) asignado(s) a ${selectedEmployee.name}.`,
     });
 
-    // Reset selection
+    // Force re-render
+    setSelectedEmployee({...selectedEmployee});
     setSelectedEpps({});
   };
 
@@ -94,29 +152,40 @@ export default function EppManagementPage() {
 
   const handleReturnAll = (employee: Employee) => {
     const assigned = getAssignedEpps(employee.id);
-    // This is where you would typically update your backend/database
+    assigned.forEach(item => {
+        item.status = 'Disponible';
+        delete item.assignedTo;
+        delete item.assignmentDate;
+        delete item.changeHistory;
+    });
+
     console.log(`Todos los EPPs devueltos por ${employee.name}`);
     toast({
       title: 'Devolución Exitosa',
       description: `Se han devuelto ${assigned.length} EPPs de ${employee.name}.`,
     });
+    // Force re-render
+    setSelectedEmployee({...employee});
   }
   
   const handleEppChange = (employee: Employee, itemId: string) => {
     const item = inventory.find(i => i.id === itemId);
     if (item) {
-        // Simulate change by updating assignment date
-        item.assignmentDate = new Date().toISOString();
-        console.log(`EPP ${item.name} cambiado para ${employee.name} en ${item.assignmentDate}`);
+        const newChangeDate = new Date().toISOString();
+        if (!item.changeHistory) {
+            item.changeHistory = [];
+        }
+        item.changeHistory.push({ date: newChangeDate });
+
+        console.log(`EPP ${item.name} cambiado para ${employee.name} en ${newChangeDate}`);
         toast({
             title: 'Cambio Exitoso',
             description: `Se ha cambiado el EPP ${item.name} para ${employee.name}.`
         });
-        // Force re-render to show updated date
+        // Force re-render to show updated history
         setSelectedEmployee({...employee});
     }
   }
-
 
   return (
     <div>
@@ -221,28 +290,33 @@ export default function EppManagementPage() {
                       <ul className="list-disc pl-5 text-sm text-muted-foreground space-y-2 mt-2">
                           {assigned.map(item => (
                               <li key={item.id} className="flex justify-between items-center">
-                                <span>
-                                  {item.name} - <span className="text-xs">Asignado: {item.assignmentDate ? format(new Date(item.assignmentDate), 'dd/MM/yyyy HH:mm') : 'N/A'}</span>
-                                </span>
-                                <AlertDialog>
-                                    <AlertDialogTrigger asChild>
-                                        <Button variant="ghost" size="sm" className="h-7">Cambiar</Button>
-                                    </AlertDialogTrigger>
-                                    <AlertDialogContent>
-                                    <AlertDialogHeader>
-                                        <AlertDialogTitle>¿Confirmar cambio?</AlertDialogTitle>
-                                        <AlertDialogDescription>
-                                            Esto registrará un cambio para el EPP &quot;{item.name}&quot; asignado a {employee.name}. Se actualizará la fecha y hora de asignación.
-                                        </AlertDialogDescription>
-                                    </AlertDialogHeader>
-                                    <AlertDialogFooter>
-                                        <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                                        <AlertDialogAction onClick={() => handleEppChange(employee, item.id)}>
-                                            Confirmar Cambio
-                                        </AlertDialogAction>
-                                    </AlertDialogFooter>
-                                    </AlertDialogContent>
-                                </AlertDialog>
+                                <div>
+                                  <span>
+                                    {item.name} - <span className="text-xs">Últ. Cambio: {item.changeHistory && item.changeHistory.length > 0 ? format(new Date(item.changeHistory[item.changeHistory.length - 1].date), 'dd/MM/yyyy HH:mm') : 'N/A'}</span>
+                                  </span>
+                                </div>
+                                <div className="flex items-center gap-1">
+                                    <HistoryModal history={item.changeHistory || []} itemName={item.name} employeeName={employee.name} />
+                                    <AlertDialog>
+                                        <AlertDialogTrigger asChild>
+                                            <Button variant="ghost" size="sm" className="h-7">Cambiar</Button>
+                                        </AlertDialogTrigger>
+                                        <AlertDialogContent>
+                                        <AlertDialogHeader>
+                                            <AlertDialogTitle>¿Confirmar cambio?</AlertDialogTitle>
+                                            <AlertDialogDescription>
+                                                Esto registrará un cambio para el EPP &quot;{item.name}&quot; asignado a {employee.name}. Se actualizará la fecha y hora de asignación.
+                                            </AlertDialogDescription>
+                                        </AlertDialogHeader>
+                                        <AlertDialogFooter>
+                                            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                                            <AlertDialogAction onClick={() => handleEppChange(employee, item.id)}>
+                                                Confirmar Cambio
+                                            </AlertDialogAction>
+                                        </AlertDialogFooter>
+                                        </AlertDialogContent>
+                                    </AlertDialog>
+                                </div>
                               </li>
                           ))}
                       </ul>

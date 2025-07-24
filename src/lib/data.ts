@@ -48,6 +48,10 @@ export const inventory: Item[] = [
     status: 'Asignado',
     assignedTo: 'E003',
     assignmentDate: '2023-10-22',
+    changeHistory: [
+      { date: '2023-10-22T10:00:00.000Z' },
+      { date: '2023-11-22T11:30:00.000Z' },
+    ],
   },
   {
     id: 'T003',
