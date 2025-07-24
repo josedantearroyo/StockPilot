@@ -56,10 +56,10 @@ export function InventoryTable({ data }: InventoryTableProps) {
           <TableHeader>
             <TableRow>
               <TableHead>Name</TableHead>
-              <TableHead>Type</TableHead>
+              <TableHead className="hidden sm:table-cell">Type</TableHead>
               <TableHead className="text-right">Quantity</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Assigned To</TableHead>
+              <TableHead className="hidden md:table-cell">Status</TableHead>
+              <TableHead className="hidden lg:table-cell">Assigned To</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -67,14 +67,14 @@ export function InventoryTable({ data }: InventoryTableProps) {
               data.map((item) => (
                 <TableRow key={item.id}>
                   <TableCell className="font-medium">{item.name}</TableCell>
-                  <TableCell>
+                  <TableCell className="hidden sm:table-cell">
                     <Badge variant={getTypeVariant(item.type)}>{item.type}</Badge>
                   </TableCell>
                   <TableCell className="text-right">{item.quantity}</TableCell>
-                  <TableCell>
+                  <TableCell className="hidden md:table-cell">
                     <Badge variant={getStatusVariant(item.status)}>{item.status}</Badge>
                   </TableCell>
-                  <TableCell>{getEmployeeName(item.assignedTo)}</TableCell>
+                  <TableCell className="hidden lg:table-cell">{getEmployeeName(item.assignedTo)}</TableCell>
                 </TableRow>
               ))
             ) : (
