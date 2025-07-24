@@ -1,3 +1,4 @@
+
 'use client';
 
 import {
@@ -15,6 +16,7 @@ import {
   FileBarChart2,
   LayoutDashboard,
   Users,
+  ClipboardPlus,
 } from 'lucide-react';
 
 const links = [
@@ -32,6 +34,11 @@ const links = [
     href: '/employees',
     label: 'Employees',
     icon: Users,
+  },
+  {
+    href: '/assignments',
+    label: 'Assignments',
+    icon: ClipboardPlus,
   },
   {
     href: '/reports/discrepancy',
