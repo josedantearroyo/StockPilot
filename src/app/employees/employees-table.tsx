@@ -1,3 +1,4 @@
+
 'use client';
 
 import type { Employee } from '@/lib/types';
@@ -9,12 +10,17 @@ import {
   TableBody,
   TableCell,
 } from '@/components/ui/table';
+import { Button } from '@/components/ui/button';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 interface EmployeesTableProps {
   data: Employee[];
+  currentPage: number;
+  totalPages: number;
+  onPageChange: (page: number) => void;
 }
 
-export function EmployeesTable({ data }: EmployeesTableProps) {
+export function EmployeesTable({ data, currentPage, totalPages, onPageChange }: EmployeesTableProps) {
   return (
     <div className="w-full">
       <div className="rounded-md border">
@@ -42,6 +48,29 @@ export function EmployeesTable({ data }: EmployeesTableProps) {
             )}
           </TableBody>
         </Table>
+      </div>
+      <div className="flex items-center justify-end space-x-2 py-4">
+      <div className="text-sm text-muted-foreground">
+          Page {currentPage} of {totalPages}
+        </div>
+        <Button
+            variant="outline"
+            size="sm"
+            onClick={() => onPageChange(currentPage - 1)}
+            disabled={currentPage === 1}
+        >
+            <ChevronLeft className="h-4 w-4" />
+            <span className="sr-only">Previous</span>
+        </Button>
+        <Button
+            variant="outline"
+            size="sm"
+            onClick={() => onPageChange(currentPage + 1)}
+            disabled={currentPage === totalPages}
+        >
+            <ChevronRight className="h-4 w-4" />
+            <span className="sr-only">Next</span>
+        </Button>
       </div>
     </div>
   );

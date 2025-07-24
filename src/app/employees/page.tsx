@@ -1,3 +1,7 @@
+
+'use client';
+
+import { useState } from 'react';
 import { PageHeader } from '@/components/page-header';
 import { employees } from '@/lib/data';
 import { EmployeesTable } from './employees-table';
@@ -6,7 +10,23 @@ import { AddEmployeeDialog } from './add-employee-dialog';
 import { Button } from '@/components/ui/button';
 import { PlusCircle } from 'lucide-react';
 
+const ITEMS_PER_PAGE = 5;
+
 export default function EmployeesPage() {
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const totalPages = Math.ceil(employees.length / ITEMS_PER_PAGE);
+  const paginatedEmployees = employees.slice(
+    (currentPage - 1) * ITEMS_PER_PAGE,
+    currentPage * ITEMS_PER_PAGE
+  );
+  
+  const handlePageChange = (page: number) => {
+    if (page > 0 && page <= totalPages) {
+      setCurrentPage(page);
+    }
+  };
+
   return (
     <div>
       <PageHeader
@@ -22,7 +42,12 @@ export default function EmployeesPage() {
       </PageHeader>
       <Card>
         <CardContent className="pt-6">
-          <EmployeesTable data={employees} />
+          <EmployeesTable
+            data={paginatedEmployees}
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={handlePageChange}
+          />
         </CardContent>
       </Card>
     </div>

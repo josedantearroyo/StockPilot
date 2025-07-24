@@ -3,7 +3,6 @@
 
 import { useState } from 'react';
 import { PageHeader } from '@/components/page-header';
-import { inventory } from '@/lib/data';
 import { InventoryTable } from './inventory-table';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -20,13 +19,33 @@ import { ItemType } from '@/lib/types';
 import { Label } from '@/components/ui/label';
 import { inventory as inventoryData } from '@/lib/data';
 
+const ITEMS_PER_PAGE = 5;
+
 export default function InventoryPage() {
   const [typeFilter, setTypeFilter] = useState<ItemType | 'all'>('all');
+  const [currentPage, setCurrentPage] = useState(1);
 
   const filteredInventory = inventoryData.filter(item => {
     if (typeFilter === 'all') return true;
     return item.type === typeFilter;
   });
+
+  const totalPages = Math.ceil(filteredInventory.length / ITEMS_PER_PAGE);
+  const paginatedInventory = filteredInventory.slice(
+    (currentPage - 1) * ITEMS_PER_PAGE,
+    currentPage * ITEMS_PER_PAGE
+  );
+
+  const handlePageChange = (page: number) => {
+    if (page > 0 && page <= totalPages) {
+      setCurrentPage(page);
+    }
+  };
+
+  const handleFilterChange = (value: ItemType | 'all') => {
+    setTypeFilter(value);
+    setCurrentPage(1); // Reset to first page on filter change
+  }
 
   return (
     <div>
@@ -47,7 +66,7 @@ export default function InventoryPage() {
                 <Label htmlFor="type-filter">Filter by Type</Label>
                 <Select
                 value={typeFilter}
-                onValueChange={(value) => setTypeFilter(value as ItemType | 'all')}
+                onValueChange={(value) => handleFilterChange(value as ItemType | 'all')}
                 >
                 <SelectTrigger id="type-filter" className="w-[180px]">
                     <SelectValue placeholder="Select type" />
@@ -62,7 +81,12 @@ export default function InventoryPage() {
           </div>
         </CardHeader>
         <CardContent>
-          <InventoryTable data={filteredInventory} />
+          <InventoryTable 
+            data={paginatedInventory} 
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={handlePageChange}
+          />
         </CardContent>
       </Card>
     </div>
