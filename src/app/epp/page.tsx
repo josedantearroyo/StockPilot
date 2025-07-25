@@ -40,6 +40,7 @@ import {
 } from '@/components/ui/dialog';
 import { format } from 'date-fns';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 function HistoryModal({ history, itemName, employeeName }: { history: ChangeRecord[], itemName: string, employeeName: string }) {
   return (
@@ -76,6 +77,116 @@ function HistoryModal({ history, itemName, employeeName }: { history: ChangeReco
     </Dialog>
   );
 }
+
+function AssignEppsModal({ availableEpps, selectedEpps, onEppSelection, onAssign }: { availableEpps: Item[], selectedEpps: Record<string, boolean>, onEppSelection: (eppId: string) => void, onAssign: () => void }) {
+    
+    const [currentPage, setCurrentPage] = useState(1);
+    const ITEMS_PER_PAGE = 6; 
+
+    const totalPages = Math.ceil(availableEpps.length / ITEMS_PER_PAGE);
+    const paginatedEpps = availableEpps.slice(
+        (currentPage - 1) * ITEMS_PER_PAGE,
+        currentPage * ITEMS_PER_PAGE
+    );
+
+    const handlePageChange = (page: number) => {
+        if (page > 0 && page <= totalPages) {
+            setCurrentPage(page);
+        }
+    };
+
+    const handleSelectAll = (checked: boolean) => {
+        availableEpps.forEach(epp => {
+            const isSelected = selectedEpps[epp.id] || false;
+            if ((checked && !isSelected) || (!checked && isSelected)) {
+                onEppSelection(epp.id);
+            }
+        });
+    };
+
+    const allSelected = availableEpps.length > 0 && availableEpps.every(t => selectedEpps[t.id]);
+
+    return (
+        <Dialog>
+            <DialogTrigger asChild>
+                <Button variant="outline" className='w-full'>Seleccionar EPP</Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-xl">
+                <DialogHeader>
+                    <DialogTitle>Seleccionar EPP Disponible</DialogTitle>
+                    <DialogDescription>
+                        Elija los EPP que desea asignar.
+                    </DialogDescription>
+                </DialogHeader>
+                <div className="space-y-4">
+                    <div className="flex items-center space-x-2">
+                        <Checkbox
+                            id="select-all-assign-epp"
+                            checked={allSelected}
+                            onCheckedChange={(checked) => handleSelectAll(Boolean(checked))}
+                        />
+                        <Label htmlFor="select-all-assign-epp">Seleccionar Todo</Label>
+                    </div>
+                    <Separator />
+                    <ScrollArea className="h-60">
+                        <div className="rounded-md border p-4 grid grid-cols-2 gap-4">
+                        {paginatedEpps.length > 0 ? (
+                            paginatedEpps.map((epp) => (
+                            <div key={epp.id} className="flex items-center gap-2">
+                                <Checkbox
+                                id={`assign-epp-${epp.id}`}
+                                checked={!!selectedEpps[epp.id]}
+                                onCheckedChange={() => onEppSelection(epp.id)}
+                                />
+                                <Label htmlFor={`assign-epp-${epp.id}`} className="font-normal">
+                                {epp.name}
+                                </Label>
+                            </div>
+                            ))
+                        ) : (
+                            <p className="text-sm text-muted-foreground col-span-2">
+                            No hay EPP disponible.
+                            </p>
+                        )}
+                        </div>
+                    </ScrollArea>
+                    <div className="flex items-center justify-end space-x-2">
+                        <div className="text-sm text-muted-foreground">
+                            Página {currentPage} de {totalPages}
+                        </div>
+                        <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => handlePageChange(currentPage - 1)}
+                            disabled={currentPage === 1}
+                        >
+                            <ChevronLeft className="h-4 w-4" />
+                            <span className="sr-only">Anterior</span>
+                        </Button>
+                        <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => handlePageChange(currentPage + 1)}
+                            disabled={currentPage === totalPages}
+                        >
+                            <ChevronRight className="h-4 w-4" />
+                            <span className="sr-only">Siguiente</span>
+                        </Button>
+                    </div>
+                </div>
+                <DialogFooter>
+                    <DialogTrigger asChild>
+                        <Button variant="ghost">Cancelar</Button>
+                    </DialogTrigger>
+                    <DialogTrigger asChild>
+                        <Button onClick={onAssign}>Asignar EPP</Button>
+                    </DialogTrigger>
+                </DialogFooter>
+            </DialogContent>
+        </Dialog>
+    );
+}
+
 
 export default function EppManagementPage() {
   const [selectedEmployee, setSelectedEmployee] = useState<Employee | null>(null);
@@ -142,7 +253,7 @@ export default function EppManagementPage() {
     });
 
     // Force re-render
-    setSelectedEmployee({...selectedEmployee});
+    setSelectedEmployee(prev => prev ? {...prev} : null);
     setSelectedEpps({});
   };
 
@@ -165,7 +276,7 @@ export default function EppManagementPage() {
       description: `Se han devuelto ${assigned.length} EPPs de ${employee.name}.`,
     });
     // Force re-render
-    setSelectedEmployee({...employee});
+    setSelectedEmployee(prev => prev ? {...prev} : null);
   }
   
   const handleEppChange = (employee: Employee, itemId: string) => {
@@ -183,7 +294,7 @@ export default function EppManagementPage() {
             description: `Se ha cambiado el EPP ${item.name} para ${employee.name}.`
         });
         // Force re-render to show updated history
-        setSelectedEmployee({...employee});
+        setSelectedEmployee(prev => prev ? {...prev} : null);
     }
   }
 
@@ -217,30 +328,12 @@ export default function EppManagementPage() {
 
             {selectedEmployee && (
               <div className="space-y-4 pt-4">
-                  <h3 className="text-lg font-medium">EPP Disponible</h3>
-                  <div className="space-y-2 rounded-md border p-4 max-h-60 overflow-y-auto">
-                    {availableEpps.length > 0 ? (
-                      availableEpps.map((epp) => (
-                        <div key={epp.id} className="flex items-center gap-2">
-                          <Checkbox
-                            id={`epp-${epp.id}`}
-                            checked={!!selectedEpps[epp.id]}
-                            onCheckedChange={() => handleEppSelection(epp.id)}
-                          />
-                          <Label htmlFor={`epp-${epp.id}`} className="font-normal">
-                            {epp.name}
-                          </Label>
-                        </div>
-                      ))
-                    ) : (
-                      <p className="text-sm text-muted-foreground">
-                        No hay EPP disponible.
-                      </p>
-                    )}
-                  </div>
-                  <Button onClick={handleAssign} className="w-full">
-                    Asignar EPP
-                  </Button>
+                  <AssignEppsModal 
+                    availableEpps={availableEpps}
+                    selectedEpps={selectedEpps}
+                    onEppSelection={handleEppSelection}
+                    onAssign={handleAssign}
+                  />
               </div>
             )}
           </CardContent>
