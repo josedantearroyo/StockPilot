@@ -27,21 +27,23 @@ export function EmployeesTable({ data, currentPage, totalPages, onPageChange }: 
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Name</TableHead>
-              <TableHead>Position</TableHead>
+              <TableHead>Nombre</TableHead>
+              <TableHead>Apellidos</TableHead>
+              <TableHead>Cargo</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {data.length ? (
               data.map((employee) => (
                 <TableRow key={employee.id}>
-                  <TableCell className="font-medium">{employee.name}</TableCell>
+                  <TableCell className="font-medium">{employee.firstName}</TableCell>
+                  <TableCell>{employee.lastName}</TableCell>
                   <TableCell>{employee.position}</TableCell>
                 </TableRow>
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={2} className="h-24 text-center">
+                <TableCell colSpan={3} className="h-24 text-center">
                   No results.
                 </TableCell>
               </TableRow>

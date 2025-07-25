@@ -19,27 +19,33 @@ export function AddEmployeeDialog({ children }: { children: React.ReactNode }) {
       <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Add New Employee</DialogTitle>
+          <DialogTitle>Añadir Nuevo Empleado</DialogTitle>
           <DialogDescription>
-            Enter the details of the new employee.
+            Introduce los detalles del nuevo empleado.
           </DialogDescription>
         </DialogHeader>
         <div className="grid gap-4 py-4">
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="name" className="text-right">
-              Name
+              Nombre
             </Label>
-            <Input id="name" placeholder="e.g. John Doe" className="col-span-3" />
+            <Input id="name" placeholder="Ej: Juan" className="col-span-3" />
+          </div>
+          <div className="grid grid-cols-4 items-center gap-4">
+            <Label htmlFor="lastName" className="text-right">
+              Apellidos
+            </Label>
+            <Input id="lastName" placeholder="Ej: Pérez" className="col-span-3" />
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="position" className="text-right">
-              Position
+              Cargo
             </Label>
-            <Input id="position" placeholder="e.g. Electrician" className="col-span-3" />
+            <Input id="position" placeholder="Ej: Electricista" className="col-span-3" />
           </div>
         </div>
         <DialogFooter>
-          <Button type="submit">Save Employee</Button>
+          <Button type="submit">Guardar Empleado</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

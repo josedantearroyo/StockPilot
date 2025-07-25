@@ -25,7 +25,8 @@ interface InventoryTableProps {
 export function InventoryTable({ data, currentPage, totalPages, onPageChange }: InventoryTableProps) {
   const getEmployeeName = (employeeId?: string) => {
     if (!employeeId) return '-';
-    return employees.find((e) => e.id === employeeId)?.name || 'Unknown';
+    const employee = employees.find((e) => e.id === employeeId);
+    return employee ? `${employee.firstName} ${employee.lastName}` : 'Unknown';
   };
 
   const getStatusVariant = (status: Item['status']) => {

@@ -18,7 +18,7 @@ export default function DiscrepancyPage() {
         .map((item) => item.name);
       
       if (assignedItems.length > 0) {
-        acc[employee.name] = assignedItems;
+        acc[`${employee.firstName} ${employee.lastName}`] = assignedItems;
       }
       return acc;
     }, {});

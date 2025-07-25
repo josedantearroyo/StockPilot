@@ -116,7 +116,7 @@ function QuickReviewModal({ employee, onReview }: { employee: Employee, onReview
           <DialogHeader>
             <DialogTitle>Revisión Rápida Mensual</DialogTitle>
             <DialogDescription>
-              Seleccione las herramientas de {employee.name} que están operativas y en buen estado.
+              Seleccione las herramientas de {`${employee.firstName} ${employee.lastName}`} que están operativas y en buen estado.
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4">
@@ -332,7 +332,7 @@ export default function AssignmentsPage() {
 
     toast({
       title: 'Asignación Exitosa',
-      description: `${itemsToAssign.length} herramienta(s) asignada(s) a ${selectedEmployee.name}.`,
+      description: `${itemsToAssign.length} herramienta(s) asignada(s) a ${selectedEmployee.firstName} ${selectedEmployee.lastName}.`,
     });
 
     // Reset selection and force re-render
@@ -432,7 +432,8 @@ export default function AssignmentsPage() {
     const item = inventory.find(i => i.id === itemId);
     if (!item) return;
 
-    const employeeName = employees.find(e => e.id === item.assignedTo)?.name || 'un empleado';
+    const employee = employees.find(e => e.id === item.assignedTo)
+    const employeeName = employee ? `${employee.firstName} ${employee.lastName}` : 'un empleado';
     
     item.status = 'Disponible';
     delete item.assignedTo;
@@ -473,7 +474,7 @@ export default function AssignmentsPage() {
                 <SelectContent>
                   {employees.map((employee) => (
                     <SelectItem key={employee.id} value={employee.id}>
-                      {employee.name}
+                      {`${employee.firstName} ${employee.lastName}`}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -509,7 +510,7 @@ export default function AssignmentsPage() {
                         <div key={employee.id} className="mb-4">
                             <div className="flex justify-between items-center">
                                 <div className='flex items-center'>
-                                    <h4 className="font-semibold">{employee.name}</h4>
+                                    <h4 className="font-semibold">{`${employee.firstName} ${employee.lastName}`}</h4>
                                     <QuickReviewModal employee={employee} onReview={handleQuickReviewSubmit} />
                                 </div>
                                 <p className="text-sm text-muted-foreground">{employee.position}</p>
@@ -521,7 +522,7 @@ export default function AssignmentsPage() {
                                         <li key={item.id} className="flex justify-between items-center">
                                             <span>{item.name}</span>
                                             <div className="flex items-center gap-1">
-                                                <ReviewHistoryModal history={item.reviewHistory || []} itemName={item.name} employeeName={employee.name} />
+                                                <ReviewHistoryModal history={item.reviewHistory || []} itemName={item.name} employeeName={`${employee.firstName} ${employee.lastName}`} />
 
                                                 <AlertDialog>
                                                     <AlertDialogTrigger asChild>

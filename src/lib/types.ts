@@ -26,6 +26,7 @@ export interface Item {
 
 export interface Employee {
   id: string;
-  name: string;
+  firstName: string;
+  lastName: string;
   position: string;
 }

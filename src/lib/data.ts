@@ -88,22 +88,26 @@ export const inventory: Item[] = [
 export const employees: Employee[] = [
   {
     id: 'E001',
-    name: 'Juan Pérez',
+    firstName: 'Juan',
+    lastName: 'Pérez',
     position: 'Electricista Senior',
   },
   {
     id: 'E002',
-    name: 'Maria Garcia',
+    firstName: 'Maria',
+    lastName: 'Garcia',
     position: 'Jefe de Proyectos',
   },
   {
     id: 'E003',
-    name: 'Carlos Rodriguez',
+    firstName: 'Carlos',
+    lastName: 'Rodriguez',
     position: 'Técnico Electricista',
   },
   {
     id: 'E004',
-    name: 'Ana Martinez',
+    firstName: 'Ana',
+    lastName: 'Martinez',
     position: 'Ayudante General',
   },
 ];

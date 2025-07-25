@@ -30,13 +30,13 @@ export default function EmployeesPage() {
   return (
     <div>
       <PageHeader
-        title="Employees"
-        description="View and manage company employees."
+        title="Empleados"
+        description="Ver y gestionar los empleados de la empresa."
       >
         <AddEmployeeDialog>
           <Button size="sm" className="ml-auto gap-1">
             <PlusCircle className="h-4 w-4" />
-            Add Employee
+            Añadir Empleado
           </Button>
         </AddEmployeeDialog>
       </PageHeader>

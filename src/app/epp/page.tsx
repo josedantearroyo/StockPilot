@@ -244,12 +244,12 @@ export default function EppManagementPage() {
     });
 
     console.log(
-      `Asignando ${itemsToAssign.join(', ')} a ${selectedEmployee.name} en la fecha ${assignmentDate}`
+      `Asignando ${itemsToAssign.join(', ')} a ${selectedEmployee.firstName} ${selectedEmployee.lastName} en la fecha ${assignmentDate}`
     );
 
     toast({
       title: 'Asignación Exitosa',
-      description: `${itemsToAssign.length} EPP(s) asignado(s) a ${selectedEmployee.name}.`,
+      description: `${itemsToAssign.length} EPP(s) asignado(s) a ${selectedEmployee.firstName} ${selectedEmployee.lastName}.`,
     });
 
     // Force re-render
@@ -270,10 +270,10 @@ export default function EppManagementPage() {
         delete item.changeHistory;
     });
 
-    console.log(`Todos los EPPs devueltos por ${employee.name}`);
+    console.log(`Todos los EPPs devueltos por ${employee.firstName} ${employee.lastName}`);
     toast({
       title: 'Devolución Exitosa',
-      description: `Se han devuelto ${assigned.length} EPPs de ${employee.name}.`,
+      description: `Se han devuelto ${assigned.length} EPPs de ${employee.firstName} ${employee.lastName}.`,
     });
     // Force re-render
     setSelectedEmployee(prev => prev ? {...prev} : null);
@@ -288,10 +288,10 @@ export default function EppManagementPage() {
         }
         item.changeHistory.push({ date: newChangeDate });
 
-        console.log(`EPP ${item.name} cambiado para ${employee.name} en ${newChangeDate}`);
+        console.log(`EPP ${item.name} cambiado para ${employee.firstName} ${employee.lastName} en ${newChangeDate}`);
         toast({
             title: 'Cambio Exitoso',
-            description: `Se ha cambiado el EPP ${item.name} para ${employee.name}.`
+            description: `Se ha cambiado el EPP ${item.name} para ${employee.firstName} ${employee.lastName}.`
         });
         // Force re-render to show updated history
         setSelectedEmployee(prev => prev ? {...prev} : null);
@@ -319,7 +319,7 @@ export default function EppManagementPage() {
                 <SelectContent>
                   {employees.map((employee) => (
                     <SelectItem key={employee.id} value={employee.id}>
-                      {employee.name}
+                      {`${employee.firstName} ${employee.lastName}`}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -355,7 +355,7 @@ export default function EppManagementPage() {
                 <div key={employee.id} className="mb-4">
                   <div className="flex justify-between items-start">
                     <div>
-                      <h4 className="font-semibold">{employee.name}</h4>
+                      <h4 className="font-semibold">{`${employee.firstName} ${employee.lastName}`}</h4>
                       <p className="text-sm text-muted-foreground">{employee.position}</p>
                     </div>
                     <AlertDialog>
@@ -366,7 +366,7 @@ export default function EppManagementPage() {
                         <AlertDialogHeader>
                           <AlertDialogTitle>¿Confirmar devolución?</AlertDialogTitle>
                           <AlertDialogDescription>
-                            Esta acción marcará todos los EPPs asignados a {employee.name} como devueltos. Esta acción no se puede deshacer.
+                            Esta acción marcará todos los EPPs asignados a {`${employee.firstName} ${employee.lastName}`} como devueltos. Esta acción no se puede deshacer.
                           </AlertDialogDescription>
                         </AlertDialogHeader>
                         <AlertDialogFooter>
@@ -389,7 +389,7 @@ export default function EppManagementPage() {
                                   </span>
                                 </div>
                                 <div className="flex items-center gap-1">
-                                    <HistoryModal history={item.changeHistory || []} itemName={item.name} employeeName={employee.name} />
+                                    <HistoryModal history={item.changeHistory || []} itemName={item.name} employeeName={`${employee.firstName} ${employee.lastName}`} />
                                     <AlertDialog>
                                         <AlertDialogTrigger asChild>
                                             <Button variant="ghost" size="sm" className="h-7">Cambiar</Button>
@@ -398,7 +398,7 @@ export default function EppManagementPage() {
                                         <AlertDialogHeader>
                                             <AlertDialogTitle>¿Confirmar cambio?</AlertDialogTitle>
                                             <AlertDialogDescription>
-                                                Esto registrará un cambio para el EPP &quot;{item.name}&quot; asignado a {employee.name}. Se actualizará la fecha y hora de asignación.
+                                                Esto registrará un cambio para el EPP &quot;{item.name}&quot; asignado a {`${employee.firstName} ${employee.lastName}`}. Se actualizará la fecha y hora de asignación.
                                             </AlertDialogDescription>
                                         </AlertDialogHeader>
                                         <AlertDialogFooter>
