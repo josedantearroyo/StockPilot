@@ -3,16 +3,19 @@
 
 import { useState } from 'react';
 import { PageHeader } from '@/components/page-header';
-import { employees } from '@/lib/data';
+import { employees as initialEmployees } from '@/lib/data';
 import { EmployeesTable } from './employees-table';
 import { Card, CardContent } from '@/components/ui/card';
 import { AddEmployeeDialog } from './add-employee-dialog';
 import { Button } from '@/components/ui/button';
+import type { Employee } from '@/lib/types';
 import { PlusCircle } from 'lucide-react';
+
 
 const ITEMS_PER_PAGE = 5;
 
 export default function EmployeesPage() {
+  const [employees, setEmployees] = useState<Employee[]>(initialEmployees);
   const [currentPage, setCurrentPage] = useState(1);
 
   const totalPages = Math.ceil(employees.length / ITEMS_PER_PAGE);
@@ -27,18 +30,22 @@ export default function EmployeesPage() {
     }
   };
 
+  const handleAddEmployee = (newEmployeeData: Omit<Employee, 'id'>) => {
+    const newEmployee: Employee = {
+      id: `E${String(employees.length + 1).padStart(3, '0')}`,
+      ...newEmployeeData,
+    };
+    setEmployees(prev => [...prev, newEmployee]);
+  };
+
+
   return (
     <div>
       <PageHeader
         title="Empleados"
         description="Ver y gestionar los empleados de la empresa."
       >
-        <AddEmployeeDialog>
-          <Button size="sm" className="ml-auto gap-1">
-            <PlusCircle className="h-4 w-4" />
-            Añadir Empleado
-          </Button>
-        </AddEmployeeDialog>
+        <AddEmployeeDialog onAddEmployee={handleAddEmployee} />
       </PageHeader>
       <Card>
         <CardContent className="pt-6">

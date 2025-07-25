@@ -15,17 +15,27 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { ItemType } from '@/lib/types';
+import { ItemType, type Item } from '@/lib/types';
 import { Label } from '@/components/ui/label';
-import { inventory as inventoryData } from '@/lib/data';
+import { inventory as initialInventory } from '@/lib/data';
 
 const ITEMS_PER_PAGE = 5;
 
 export default function InventoryPage() {
+  const [inventory, setInventory] = useState<Item[]>(initialInventory);
   const [typeFilter, setTypeFilter] = useState<ItemType | 'all'>('all');
   const [currentPage, setCurrentPage] = useState(1);
 
-  const filteredInventory = inventoryData.filter(item => {
+  const handleAddItem = (newItemData: Omit<Item, 'id' | 'status'>) => {
+    const newItem: Item = {
+        id: `${newItemData.type.charAt(0)}${String(inventory.length + 1).padStart(3, '0')}`,
+        status: 'Disponible',
+        ...newItemData
+    };
+    setInventory(prev => [...prev, newItem]);
+  }
+
+  const filteredInventory = inventory.filter(item => {
     if (typeFilter === 'all') return true;
     return item.type === typeFilter;
   });
@@ -53,12 +63,7 @@ export default function InventoryPage() {
         title="Inventory"
         description="Manage your tools, materials, and personal protective equipment."
       >
-        <AddItemDialog>
-          <Button size="sm" className="ml-auto gap-1">
-            <PlusCircle className="h-4 w-4" />
-            Add Item
-          </Button>
-        </AddItemDialog>
+        <AddItemDialog onAddItem={handleAddItem} />
       </PageHeader>
       
       <Card>
