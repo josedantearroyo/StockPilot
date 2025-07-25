@@ -4,7 +4,7 @@
 import { useState } from 'react';
 import { PageHeader } from '@/components/page-header';
 import { employees, inventory } from '@/lib/data';
-import type { Employee, Item } from '@/lib/types';
+import type { Employee, Item, ReviewRecord } from '@/lib/types';
 import {
   Select,
   SelectContent,
@@ -29,7 +29,55 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
+import {
+    Dialog,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+    DialogDescription,
+    DialogFooter,
+  } from '@/components/ui/dialog';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { format } from 'date-fns';
+import { ScrollArea } from '@/components/ui/scroll-area';
+
+function ReviewHistoryModal({ history, itemName, employeeName }: { history: ReviewRecord[], itemName: string, employeeName: string }) {
+    return (
+      <Dialog>
+        <DialogTrigger asChild>
+          <Button variant="link" size="sm" className="h-7 px-2">Ver Historial</Button>
+        </DialogTrigger>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Historial de Revisiones: {itemName}</DialogTitle>
+            <DialogDescription>
+              Mostrando el historial de revisiones para {employeeName}.
+            </DialogDescription>
+          </DialogHeader>
+          <ScrollArea className="max-h-60">
+              <div className="space-y-2 pr-4">
+              {history && history.length > 0 ? (
+                  <ul className="list-disc pl-5">
+                  {history.map((record, index) => (
+                      <li key={index} className="text-sm">
+                        {format(new Date(record.date), 'dd/MM/yyyy HH:mm')} - {record.status}
+                        {record.actionTaken && ` (${record.actionTaken})`}
+                      </li>
+                  ))}
+                  </ul>
+              ) : (
+                  <p className="text-sm text-muted-foreground">No hay historial de revisiones.</p>
+              )}
+              </div>
+          </ScrollArea>
+          <DialogFooter>
+              <Button onClick={(e) => (e.target as HTMLElement).closest('[role="dialog"]')?.querySelector<HTMLButtonElement>('[aria-label="Close"]')?.click()}>Cerrar</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    );
+  }
 
 export default function AssignmentsPage() {
   const [selectedEmployee, setSelectedEmployee] = useState<Employee | null>(null);
@@ -87,6 +135,9 @@ export default function AssignmentsPage() {
             item.assignedTo = selectedEmployee.id;
             item.status = 'Asignado';
             item.assignmentDate = assignmentDate;
+            if (!item.reviewHistory) {
+                item.reviewHistory = [];
+            }
         }
     });
 
@@ -111,14 +162,21 @@ export default function AssignmentsPage() {
   const handleReviewSubmit = (defectiveItemId: string) => {
     const defectiveItem = inventory.find(i => i.id === defectiveItemId);
     if (!defectiveItem) return;
+    
+    const newReviewRecord: ReviewRecord = {
+        date: new Date().toISOString(),
+        status: reviewStatus,
+    };
   
     if (reviewStatus === 'Operativa') {
         defectiveItem.lastReviewDate = new Date().toISOString();
+        newReviewRecord.actionTaken = 'ninguna';
         toast({
             title: 'Revisión Completada',
             description: `${defectiveItem.name} ha sido marcada como operativa.`,
         });
     } else { // Defectuosa
+        newReviewRecord.actionTaken = defectiveAction;
         // Mark the defective item for maintenance and unassign it
         defectiveItem.status = 'En Mantenimiento';
         const employeeId = defectiveItem.assignedTo;
@@ -144,6 +202,11 @@ export default function AssignmentsPage() {
             });
         }
     }
+
+    if (!defectiveItem.reviewHistory) {
+        defectiveItem.reviewHistory = [];
+    }
+    defectiveItem.reviewHistory.push(newReviewRecord);
   
     // Reset review state and force re-render
     setReviewStatus('Operativa');
@@ -243,75 +306,78 @@ export default function AssignmentsPage() {
                                     {assigned.map(item => (
                                         <li key={item.id} className="flex justify-between items-center">
                                             <span>{item.name}</span>
-                                            <AlertDialog onOpenChange={(open) => !open && resetReviewDialog()}>
-                                                <AlertDialogTrigger asChild>
-                                                    <Button variant="outline" size="sm">Revisar</Button>
-                                                </AlertDialogTrigger>
-                                                <AlertDialogContent>
-                                                    <AlertDialogHeader>
-                                                        <AlertDialogTitle>Revisión de Herramienta: {item.name}</AlertDialogTitle>
-                                                        <AlertDialogDescription>
-                                                            Seleccione el estado actual de la herramienta. Si está defectuosa, podrá cambiarla o quitarla.
-                                                        </AlertDialogDescription>
-                                                    </AlertDialogHeader>
-                                                    
-                                                    <RadioGroup value={reviewStatus} onValueChange={(val) => setReviewStatus(val as any)} className="my-4">
-                                                        <Label className='font-bold'>Estado</Label>
-                                                        <div className="flex items-center space-x-2">
-                                                            <RadioGroupItem value="Operativa" id={`op-${item.id}`} />
-                                                            <Label htmlFor={`op-${item.id}`}>Operativa</Label>
-                                                        </div>
-                                                        <div className="flex items-center space-x-2">
-                                                            <RadioGroupItem value="Defectuosa" id={`def-${item.id}`} />
-                                                            <Label htmlFor={`def-${item.id}`}>Defectuosa</Label>
-                                                        </div>
-                                                    </RadioGroup>
-
-                                                    {reviewStatus === 'Defectuosa' && (
-                                                      <div className='space-y-4 rounded-md border bg-muted/50 p-4'>
-                                                        <RadioGroup value={defectiveAction} onValueChange={(val) => setDefectiveAction(val as any)}>
-                                                          <Label className='font-bold'>Acción a tomar</Label>
-                                                          <div className="flex items-center space-x-2">
-                                                              <RadioGroupItem value="quitar" id={`act-quitar-${item.id}`} />
-                                                              <Label htmlFor={`act-quitar-${item.id}`}>Solo quitar de la asignación</Label>
-                                                          </div>
-                                                          <div className="flex items-center space-x-2">
-                                                              <RadioGroupItem value="cambiar" id={`act-cambiar-${item.id}`} />
-                                                              <Label htmlFor={`act-cambiar-${item.id}`}>Cambiar por otra herramienta</Label>
-                                                          </div>
+                                            <div className="flex items-center">
+                                                <ReviewHistoryModal history={item.reviewHistory || []} itemName={item.name} employeeName={employee.name} />
+                                                <AlertDialog onOpenChange={(open) => !open && resetReviewDialog()}>
+                                                    <AlertDialogTrigger asChild>
+                                                        <Button variant="outline" size="sm">Revisar</Button>
+                                                    </AlertDialogTrigger>
+                                                    <AlertDialogContent>
+                                                        <AlertDialogHeader>
+                                                            <AlertDialogTitle>Revisión de Herramienta: {item.name}</AlertDialogTitle>
+                                                            <AlertDialogDescription>
+                                                                Seleccione el estado actual de la herramienta. Si está defectuosa, podrá cambiarla o quitarla.
+                                                            </AlertDialogDescription>
+                                                        </AlertDialogHeader>
+                                                        
+                                                        <RadioGroup value={reviewStatus} onValueChange={(val) => setReviewStatus(val as any)} className="my-4">
+                                                            <Label className='font-bold'>Estado</Label>
+                                                            <div className="flex items-center space-x-2">
+                                                                <RadioGroupItem value="Operativa" id={`op-${item.id}`} />
+                                                                <Label htmlFor={`op-${item.id}`}>Operativa</Label>
+                                                            </div>
+                                                            <div className="flex items-center space-x-2">
+                                                                <RadioGroupItem value="Defectuosa" id={`def-${item.id}`} />
+                                                                <Label htmlFor={`def-${item.id}`}>Defectuosa</Label>
+                                                            </div>
                                                         </RadioGroup>
 
-                                                        {defectiveAction === 'cambiar' && (
-                                                            <div className="space-y-2">
-                                                                <Label htmlFor="replacement-tool">Seleccionar reemplazo</Label>
-                                                                <Select onValueChange={setReplacementToolId}>
-                                                                    <SelectTrigger id="replacement-tool">
-                                                                        <SelectValue placeholder="Seleccione herramienta" />
-                                                                    </SelectTrigger>
-                                                                    <SelectContent>
-                                                                        {availableTools.filter(t => t.id !== item.id).map(tool => (
-                                                                            <SelectItem key={tool.id} value={tool.id}>
-                                                                                {tool.name}
-                                                                            </SelectItem>
-                                                                        ))}
-                                                                    </SelectContent>
-                                                                </Select>
+                                                        {reviewStatus === 'Defectuosa' && (
+                                                        <div className='space-y-4 rounded-md border bg-muted/50 p-4'>
+                                                            <RadioGroup value={defectiveAction} onValueChange={(val) => setDefectiveAction(val as any)}>
+                                                            <Label className='font-bold'>Acción a tomar</Label>
+                                                            <div className="flex items-center space-x-2">
+                                                                <RadioGroupItem value="quitar" id={`act-quitar-${item.id}`} />
+                                                                <Label htmlFor={`act-quitar-${item.id}`}>Solo quitar de la asignación</Label>
                                                             </div>
-                                                        )}
-                                                      </div>
-                                                    )}
+                                                            <div className="flex items-center space-x-2">
+                                                                <RadioGroupItem value="cambiar" id={`act-cambiar-${item.id}`} />
+                                                                <Label htmlFor={`act-cambiar-${item.id}`}>Cambiar por otra herramienta</Label>
+                                                            </div>
+                                                            </RadioGroup>
 
-                                                    <AlertDialogFooter>
-                                                        <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                                                        <AlertDialogAction 
-                                                          disabled={reviewStatus === 'Defectuosa' && defectiveAction === 'cambiar' && !replacementToolId}
-                                                          onClick={() => handleReviewSubmit(item.id)}
-                                                        >
-                                                            Guardar
-                                                        </AlertDialogAction>
-                                                    </AlertDialogFooter>
-                                                </AlertDialogContent>
-                                            </AlertDialog>
+                                                            {defectiveAction === 'cambiar' && (
+                                                                <div className="space-y-2">
+                                                                    <Label htmlFor="replacement-tool">Seleccionar reemplazo</Label>
+                                                                    <Select onValueChange={setReplacementToolId}>
+                                                                        <SelectTrigger id="replacement-tool">
+                                                                            <SelectValue placeholder="Seleccione herramienta" />
+                                                                        </SelectTrigger>
+                                                                        <SelectContent>
+                                                                            {availableTools.filter(t => t.id !== item.id).map(tool => (
+                                                                                <SelectItem key={tool.id} value={tool.id}>
+                                                                                    {tool.name}
+                                                                                </SelectItem>
+                                                                            ))}
+                                                                        </SelectContent>
+                                                                    </Select>
+                                                                </div>
+                                                            )}
+                                                        </div>
+                                                        )}
+
+                                                        <AlertDialogFooter>
+                                                            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                                                            <AlertDialogAction 
+                                                            disabled={reviewStatus === 'Defectuosa' && defectiveAction === 'cambiar' && !replacementToolId}
+                                                            onClick={() => handleReviewSubmit(item.id)}
+                                                            >
+                                                                Guardar
+                                                            </AlertDialogAction>
+                                                        </AlertDialogFooter>
+                                                    </AlertDialogContent>
+                                                </AlertDialog>
+                                            </div>
                                         </li>
                                     ))}
                                 </ul>

@@ -5,6 +5,12 @@ export interface ChangeRecord {
   date: string; // ISO date string
 }
 
+export interface ReviewRecord {
+    date: string; // ISO date string
+    status: 'Operativa' | 'Defectuosa';
+    actionTaken?: 'ninguna' | 'cambiada' | 'quitada';
+}
+
 export interface Item {
   id: string;
   name: string;
@@ -15,6 +21,7 @@ export interface Item {
   assignmentDate?: string; // ISO date string
   changeHistory?: ChangeRecord[];
   lastReviewDate?: string; // ISO date string for tools
+  reviewHistory?: ReviewRecord[];
 }
 
 export interface Employee {
