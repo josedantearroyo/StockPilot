@@ -63,8 +63,7 @@ export function InventoryTable({ data, currentPage, totalPages, onPageChange }: 
             <TableRow>
               <TableHead>Name</TableHead>
               <TableHead>Type</TableHead>
-              <TableHead className="text-right">Quantity</TableHead>
-              <TableHead className="hidden md:table-cell">Status</TableHead>
+              <TableHead>Status</TableHead>
               <TableHead className="hidden lg:table-cell">Assigned To</TableHead>
             </TableRow>
           </TableHeader>
@@ -76,8 +75,7 @@ export function InventoryTable({ data, currentPage, totalPages, onPageChange }: 
                   <TableCell>
                     <Badge variant={getTypeVariant(item.type)}>{item.type}</Badge>
                   </TableCell>
-                  <TableCell className="text-right">{item.quantity}</TableCell>
-                  <TableCell className="hidden md:table-cell">
+                  <TableCell>
                     <Badge variant={getStatusVariant(item.status)}>{item.status}</Badge>
                   </TableCell>
                   <TableCell className="hidden lg:table-cell">{getEmployeeName(item.assignedTo)}</TableCell>
