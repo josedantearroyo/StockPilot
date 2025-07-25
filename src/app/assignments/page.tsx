@@ -41,6 +41,7 @@ import {
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { format } from 'date-fns';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { RotateCcw, ArrowLeftRight, Trash2 } from 'lucide-react';
 
 function ReviewHistoryModal({ history, itemName, employeeName }: { history: ReviewRecord[], itemName: string, employeeName: string }) {
     return (
@@ -77,7 +78,87 @@ function ReviewHistoryModal({ history, itemName, employeeName }: { history: Revi
         </DialogContent>
       </Dialog>
     );
-  }
+}
+
+function QuickReviewModal({ employee, onReview }: { employee: Employee, onReview: (itemIds: string[]) => void }) {
+    const assignedTools = inventory.filter(item => item.assignedTo === employee.id && item.type === 'Herramienta');
+    const [selected, setSelected] = useState<Record<string, boolean>>({});
+  
+    const handleSelectAll = (checked: boolean) => {
+      const newSelected: Record<string, boolean> = {};
+      if (checked) {
+        assignedTools.forEach(tool => {
+          newSelected[tool.id] = true;
+        });
+      }
+      setSelected(newSelected);
+    };
+  
+    const handleSelectOne = (toolId: string) => {
+      setSelected(prev => ({ ...prev, [toolId]: !prev[toolId] }));
+    };
+  
+    const handleSubmit = () => {
+      onReview(Object.keys(selected).filter(id => selected[id]));
+    };
+
+    const allSelected = assignedTools.length > 0 && assignedTools.every(t => selected[t.id]);
+    const someSelected = assignedTools.some(t => selected[t.id]);
+  
+    return (
+      <Dialog>
+        <DialogTrigger asChild>
+          <Button variant="outline" size="sm" className="ml-2 gap-1.5 h-8">
+            <RotateCcw className="h-3.5 w-3.5" />
+            Revisión Rápida
+          </Button>
+        </DialogTrigger>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Revisión Rápida Mensual</DialogTitle>
+            <DialogDescription>
+              Seleccione las herramientas de {employee.name} que están operativas y en buen estado.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="flex items-center space-x-2">
+                <Checkbox
+                    id="select-all"
+                    checked={allSelected}
+                    onCheckedChange={(checked) => handleSelectAll(Boolean(checked))}
+                />
+                <Label htmlFor="select-all">Seleccionar Todo</Label>
+            </div>
+            <Separator />
+            <ScrollArea className="max-h-60">
+              <div className="space-y-2 pr-4">
+                {assignedTools.map(tool => (
+                  <div key={tool.id} className="flex items-center space-x-2">
+                    <Checkbox
+                      id={`tool-review-${tool.id}`}
+                      checked={!!selected[tool.id]}
+                      onCheckedChange={() => handleSelectOne(tool.id)}
+                    />
+                    <Label htmlFor={`tool-review-${tool.id}`} className="font-normal">{tool.name}</Label>
+                  </div>
+                ))}
+              </div>
+            </ScrollArea>
+          </div>
+          <DialogFooter>
+            <DialogTrigger asChild>
+                <Button variant="ghost">Cancelar</Button>
+            </DialogTrigger>
+            <DialogTrigger asChild>
+                <Button onClick={handleSubmit} disabled={Object.keys(selected).filter(id => selected[id]).length === 0}>
+                    Guardar Revisión
+                </Button>
+            </DialogTrigger>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    );
+}
 
 export default function AssignmentsPage() {
   const [selectedEmployee, setSelectedEmployee] = useState<Employee | null>(null);
@@ -141,10 +222,6 @@ export default function AssignmentsPage() {
         }
     });
 
-    console.log(
-      `Asignando ${itemsToAssign.join(', ')} a ${selectedEmployee.name}`
-    );
-
     toast({
       title: 'Asignación Exitosa',
       description: `${itemsToAssign.length} herramienta(s) asignada(s) a ${selectedEmployee.name}.`,
@@ -176,8 +253,7 @@ export default function AssignmentsPage() {
             description: `${defectiveItem.name} ha sido marcada como operativa.`,
         });
     } else { // Defectuosa
-        newReviewRecord.actionTaken = defectiveAction;
-        // Mark the defective item for maintenance and unassign it
+        newReviewRecord.actionTaken = defectiveAction === 'cambiar' ? 'cambiada' : 'quitada';
         defectiveItem.status = 'En Mantenimiento';
         const employeeId = defectiveItem.assignedTo;
         delete defectiveItem.assignedTo;
@@ -214,6 +290,53 @@ export default function AssignmentsPage() {
     setReplacementToolId(null);
     setSelectedEmployee(prev => prev ? {...prev} : null);
   };
+
+  const handleQuickReviewSubmit = (itemIds: string[]) => {
+    const reviewDate = new Date().toISOString();
+    let reviewedCount = 0;
+
+    itemIds.forEach(id => {
+        const item = inventory.find(i => i.id === id);
+        if (item) {
+            item.lastReviewDate = reviewDate;
+            if (!item.reviewHistory) {
+                item.reviewHistory = [];
+            }
+            item.reviewHistory.push({
+                date: reviewDate,
+                status: 'Operativa',
+                actionTaken: 'ninguna'
+            });
+            reviewedCount++;
+        }
+    });
+
+    if (reviewedCount > 0) {
+        toast({
+            title: 'Revisión Rápida Completa',
+            description: `${reviewedCount} herramienta(s) han sido marcadas como operativas.`
+        });
+        setSelectedEmployee(prev => prev ? {...prev} : null);
+    }
+  };
+
+  const handleReturnTool = (itemId: string) => {
+    const item = inventory.find(i => i.id === itemId);
+    if (!item) return;
+
+    const employeeName = employees.find(e => e.id === item.assignedTo)?.name || 'un empleado';
+    
+    item.status = 'Disponible';
+    delete item.assignedTo;
+    delete item.assignmentDate;
+
+    toast({
+        title: 'Herramienta Devuelta',
+        description: `${item.name} ha sido devuelta por ${employeeName} y está disponible en inventario.`
+    });
+    
+    setSelectedEmployee(prev => prev ? {...prev} : null);
+  }
   
   const resetReviewDialog = () => {
     setReviewStatus('Operativa');
@@ -294,11 +417,12 @@ export default function AssignmentsPage() {
                     
                     return (
                         <div key={employee.id} className="mb-4">
-                            <div className="flex justify-between items-start">
-                                <div>
+                            <div className="flex justify-between items-center">
+                                <div className='flex items-center'>
                                     <h4 className="font-semibold">{employee.name}</h4>
-                                    <p className="text-sm text-muted-foreground">{employee.position}</p>
+                                    <QuickReviewModal employee={employee} onReview={handleQuickReviewSubmit} />
                                 </div>
+                                <p className="text-sm text-muted-foreground">{employee.position}</p>
                             </div>
                             <div className="mt-2">
                                 <h5 className="font-medium text-sm">Herramientas</h5>
@@ -306,11 +430,30 @@ export default function AssignmentsPage() {
                                     {assigned.map(item => (
                                         <li key={item.id} className="flex justify-between items-center">
                                             <span>{item.name}</span>
-                                            <div className="flex items-center">
+                                            <div className="flex items-center gap-1">
                                                 <ReviewHistoryModal history={item.reviewHistory || []} itemName={item.name} employeeName={employee.name} />
+
+                                                <AlertDialog>
+                                                    <AlertDialogTrigger asChild>
+                                                        <Button variant="ghost" size="sm" className="h-7 px-2"><Trash2 className="h-4 w-4" /></Button>
+                                                    </AlertDialogTrigger>
+                                                    <AlertDialogContent>
+                                                        <AlertDialogHeader>
+                                                            <AlertDialogTitle>¿Confirmar devolución?</AlertDialogTitle>
+                                                            <AlertDialogDescription>
+                                                                Esta acción devolverá la herramienta &quot;{item.name}&quot; al inventario. El empleado ya no la tendrá asignada.
+                                                            </AlertDialogDescription>
+                                                        </AlertDialogHeader>
+                                                        <AlertDialogFooter>
+                                                            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                                                            <AlertDialogAction onClick={() => handleReturnTool(item.id)}>Confirmar</AlertDialogAction>
+                                                        </AlertDialogFooter>
+                                                    </AlertDialogContent>
+                                                </AlertDialog>
+
                                                 <AlertDialog onOpenChange={(open) => !open && resetReviewDialog()}>
                                                     <AlertDialogTrigger asChild>
-                                                        <Button variant="outline" size="sm">Revisar</Button>
+                                                        <Button variant="outline" size="sm" className='h-7 px-2'>Revisar</Button>
                                                     </AlertDialogTrigger>
                                                     <AlertDialogContent>
                                                         <AlertDialogHeader>
@@ -392,3 +535,5 @@ export default function AssignmentsPage() {
     </div>
   );
 }
+
+    
