@@ -1,3 +1,4 @@
+
 import {
   Card,
   CardContent,
@@ -24,6 +25,9 @@ export default function Dashboard() {
   ).length;
   const availableItems = inventory.length - assignedItems;
   const totalEmployees = employees.length;
+  const maintenanceTools = inventory.filter(
+    (item) => item.type === 'Herramienta' && item.status === 'En Mantenimiento'
+  ).length;
 
   return (
     <div>
@@ -81,8 +85,22 @@ export default function Dashboard() {
           </CardContent>
         </Card>
       </div>
-      <div className="mt-6 grid gap-4 grid-cols-1">
-        <Card className="bg-gradient-to-br from-primary/10 to-background">
+       <div className="mt-6 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">
+                Tools in Maintenance
+                </CardTitle>
+                <Wrench className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+                <div className="text-2xl font-bold">{maintenanceTools}</div>
+                <p className="text-xs text-muted-foreground">
+                tools needing repair
+                </p>
+            </CardContent>
+        </Card>
+        <Card className="col-span-1 lg:col-span-3 bg-gradient-to-br from-primary/10 to-background">
           <CardHeader>
             <CardTitle>AI-Powered Discrepancy Detection</CardTitle>
             <CardDescription>
@@ -102,3 +120,4 @@ export default function Dashboard() {
     </div>
   );
 }
+
