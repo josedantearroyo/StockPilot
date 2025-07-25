@@ -41,7 +41,7 @@ import {
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { format } from 'date-fns';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { RotateCcw, ArrowLeftRight, Trash2 } from 'lucide-react';
+import { RotateCcw, Trash2 } from 'lucide-react';
 
 function ReviewHistoryModal({ history, itemName, employeeName }: { history: ReviewRecord[], itemName: string, employeeName: string }) {
     return (
@@ -103,7 +103,6 @@ function QuickReviewModal({ employee, onReview }: { employee: Employee, onReview
     };
 
     const allSelected = assignedTools.length > 0 && assignedTools.every(t => selected[t.id]);
-    const someSelected = assignedTools.some(t => selected[t.id]);
   
     return (
       <Dialog>
@@ -157,6 +156,78 @@ function QuickReviewModal({ employee, onReview }: { employee: Employee, onReview
           </DialogFooter>
         </DialogContent>
       </Dialog>
+    );
+}
+
+function AssignToolsModal({ availableTools, selectedTools, onToolSelection, onAssign }: { availableTools: Item[], selectedTools: Record<string, boolean>, onToolSelection: (toolId: string) => void, onAssign: () => void }) {
+    
+    const handleSelectAll = (checked: boolean) => {
+        availableTools.forEach(tool => {
+            if (checked && !selectedTools[tool.id]) {
+                onToolSelection(tool.id);
+            } else if (!checked && selectedTools[tool.id]) {
+                onToolSelection(tool.id);
+            }
+        });
+    };
+
+    const allSelected = availableTools.length > 0 && availableTools.every(t => selectedTools[t.id]);
+
+    return (
+        <Dialog>
+            <DialogTrigger asChild>
+                <Button variant="outline" className='w-full'>Seleccionar Herramientas</Button>
+            </DialogTrigger>
+            <DialogContent>
+                <DialogHeader>
+                    <DialogTitle>Seleccionar Herramientas Disponibles</DialogTitle>
+                    <DialogDescription>
+                        Elija las herramientas que desea asignar.
+                    </DialogDescription>
+                </DialogHeader>
+                <div className="space-y-4">
+                    <div className="flex items-center space-x-2">
+                        <Checkbox
+                            id="select-all-assign"
+                            checked={allSelected}
+                            onCheckedChange={(checked) => handleSelectAll(Boolean(checked))}
+                        />
+                        <Label htmlFor="select-all-assign">Seleccionar Todo</Label>
+                    </div>
+                    <Separator />
+                    <ScrollArea className="max-h-60">
+                        <div className="space-y-2 rounded-md border p-4">
+                        {availableTools.length > 0 ? (
+                            availableTools.map((tool) => (
+                            <div key={tool.id} className="flex items-center gap-2">
+                                <Checkbox
+                                id={`assign-tool-${tool.id}`}
+                                checked={!!selectedTools[tool.id]}
+                                onCheckedChange={() => onToolSelection(tool.id)}
+                                />
+                                <Label htmlFor={`assign-tool-${tool.id}`} className="font-normal">
+                                {tool.name}
+                                </Label>
+                            </div>
+                            ))
+                        ) : (
+                            <p className="text-sm text-muted-foreground">
+                            No hay herramientas disponibles.
+                            </p>
+                        )}
+                        </div>
+                    </ScrollArea>
+                </div>
+                <DialogFooter>
+                    <DialogTrigger asChild>
+                        <Button variant="ghost">Cancelar</Button>
+                    </DialogTrigger>
+                    <DialogTrigger asChild>
+                        <Button onClick={onAssign}>Asignar Herramientas</Button>
+                    </DialogTrigger>
+                </DialogFooter>
+            </DialogContent>
+        </Dialog>
     );
 }
 
@@ -229,7 +300,7 @@ export default function AssignmentsPage() {
 
     // Reset selection and force re-render
     setSelectedTools({});
-    setSelectedEmployee({...selectedEmployee});
+    setSelectedEmployee(prev => prev ? {...prev} : null);
   };
   
   const getAssignedItems = (employeeId: string): Item[] => {
@@ -374,30 +445,12 @@ export default function AssignmentsPage() {
 
             {selectedEmployee && (
               <div className="space-y-4 pt-4">
-                  <h3 className="text-lg font-medium">Herramientas Disponibles</h3>
-                  <div className="space-y-2 rounded-md border p-4 max-h-60 overflow-y-auto">
-                  {availableTools.length > 0 ? (
-                    availableTools.map((tool) => (
-                      <div key={tool.id} className="flex items-center gap-2">
-                        <Checkbox
-                          id={`tool-${tool.id}`}
-                          checked={!!selectedTools[tool.id]}
-                          onCheckedChange={() => handleToolSelection(tool.id)}
-                        />
-                        <Label htmlFor={`tool-${tool.id}`} className="font-normal">
-                          {tool.name}
-                        </Label>
-                      </div>
-                    ))
-                  ) : (
-                    <p className="text-sm text-muted-foreground">
-                      No hay herramientas disponibles.
-                    </p>
-                  )}
-                </div>
-                <Button onClick={handleAssign} className="w-full">
-                  Asignar Herramientas
-                </Button>
+                  <AssignToolsModal 
+                    availableTools={availableTools}
+                    selectedTools={selectedTools}
+                    onToolSelection={handleToolSelection}
+                    onAssign={handleAssign}
+                  />
               </div>
             )}
           </CardContent>
@@ -535,5 +588,3 @@ export default function AssignmentsPage() {
     </div>
   );
 }
-
-    
