@@ -77,7 +77,10 @@ export function InventoryTable({ data, currentPage, totalPages, onPageChange }: 
                     <Badge variant={getTypeVariant(item.type)}>{item.type}</Badge>
                   </TableCell>
                   <TableCell>
-                    <Badge variant={getStatusVariant(item.status)}>{item.status}</Badge>
+                    <Badge variant={getStatusVariant(item.status)}>
+                      {item.status}
+                      {item.status === 'En Mantenimiento' && ` (${item.quantity})`}
+                    </Badge>
                   </TableCell>
                   <TableCell className="hidden md:table-cell">{item.quantity}</TableCell>
                   <TableCell className="hidden lg:table-cell">{getEmployeeName(item.assignedTo)}</TableCell>
