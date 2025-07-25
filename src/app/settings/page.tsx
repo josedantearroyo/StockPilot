@@ -1,6 +1,7 @@
 
 'use client';
 
+import { useEffect, useState } from 'react';
 import { PageHeader } from '@/components/page-header';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -12,6 +13,39 @@ import { useToast } from '@/hooks/use-toast';
 
 export default function SettingsPage() {
     const { toast } = useToast();
+    const [theme, setTheme] = useState('system');
+
+    useEffect(() => {
+        const storedTheme = localStorage.getItem('theme') || 'system';
+        setTheme(storedTheme);
+        if (storedTheme === 'dark') {
+            document.documentElement.classList.add('dark');
+        } else if (storedTheme === 'light') {
+            document.documentElement.classList.remove('dark');
+        } else {
+            if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
+        }
+    }, []);
+
+    const handleThemeChange = (value: string) => {
+        setTheme(value);
+        localStorage.setItem('theme', value);
+        if (value === 'dark') {
+            document.documentElement.classList.add('dark');
+        } else if (value === 'light') {
+            document.documentElement.classList.remove('dark');
+        } else {
+            if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
+        }
+    };
 
     const handleSave = () => {
         toast({ title: 'Éxito', description: 'Configuración guardada correctamente.' });
@@ -36,7 +70,7 @@ export default function SettingsPage() {
                                 Selecciona el tema visual para la aplicación.
                             </span>
                         </Label>
-                        <Select defaultValue="light">
+                        <Select value={theme} onValueChange={handleThemeChange}>
                             <SelectTrigger className="w-[180px]">
                                 <SelectValue placeholder="Seleccionar tema" />
                             </SelectTrigger>
@@ -81,5 +115,3 @@ export default function SettingsPage() {
     </div>
   );
 }
-
-    
