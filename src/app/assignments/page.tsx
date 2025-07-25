@@ -41,7 +41,7 @@ import {
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { format } from 'date-fns';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { RotateCcw, Trash2 } from 'lucide-react';
+import { RotateCcw, Trash2, ChevronLeft, ChevronRight } from 'lucide-react';
 
 function ReviewHistoryModal({ history, itemName, employeeName }: { history: ReviewRecord[], itemName: string, employeeName: string }) {
     return (
@@ -161,11 +161,25 @@ function QuickReviewModal({ employee, onReview }: { employee: Employee, onReview
 
 function AssignToolsModal({ availableTools, selectedTools, onToolSelection, onAssign }: { availableTools: Item[], selectedTools: Record<string, boolean>, onToolSelection: (toolId: string) => void, onAssign: () => void }) {
     
+    const [currentPage, setCurrentPage] = useState(1);
+    const ITEMS_PER_PAGE = 6; 
+
+    const totalPages = Math.ceil(availableTools.length / ITEMS_PER_PAGE);
+    const paginatedTools = availableTools.slice(
+        (currentPage - 1) * ITEMS_PER_PAGE,
+        currentPage * ITEMS_PER_PAGE
+    );
+
+    const handlePageChange = (page: number) => {
+        if (page > 0 && page <= totalPages) {
+            setCurrentPage(page);
+        }
+    };
+
     const handleSelectAll = (checked: boolean) => {
         availableTools.forEach(tool => {
-            if (checked && !selectedTools[tool.id]) {
-                onToolSelection(tool.id);
-            } else if (!checked && selectedTools[tool.id]) {
+            const isSelected = selectedTools[tool.id] || false;
+            if ((checked && !isSelected) || (!checked && isSelected)) {
                 onToolSelection(tool.id);
             }
         });
@@ -178,7 +192,7 @@ function AssignToolsModal({ availableTools, selectedTools, onToolSelection, onAs
             <DialogTrigger asChild>
                 <Button variant="outline" className='w-full'>Seleccionar Herramientas</Button>
             </DialogTrigger>
-            <DialogContent>
+            <DialogContent className="sm:max-w-xl">
                 <DialogHeader>
                     <DialogTitle>Seleccionar Herramientas Disponibles</DialogTitle>
                     <DialogDescription>
@@ -195,10 +209,10 @@ function AssignToolsModal({ availableTools, selectedTools, onToolSelection, onAs
                         <Label htmlFor="select-all-assign">Seleccionar Todo</Label>
                     </div>
                     <Separator />
-                    <ScrollArea className="max-h-60">
-                        <div className="space-y-2 rounded-md border p-4">
-                        {availableTools.length > 0 ? (
-                            availableTools.map((tool) => (
+                    <ScrollArea className="h-60">
+                        <div className="rounded-md border p-4 grid grid-cols-2 gap-4">
+                        {paginatedTools.length > 0 ? (
+                            paginatedTools.map((tool) => (
                             <div key={tool.id} className="flex items-center gap-2">
                                 <Checkbox
                                 id={`assign-tool-${tool.id}`}
@@ -211,12 +225,35 @@ function AssignToolsModal({ availableTools, selectedTools, onToolSelection, onAs
                             </div>
                             ))
                         ) : (
-                            <p className="text-sm text-muted-foreground">
+                            <p className="text-sm text-muted-foreground col-span-2">
                             No hay herramientas disponibles.
                             </p>
                         )}
                         </div>
                     </ScrollArea>
+                    <div className="flex items-center justify-end space-x-2">
+                        <div className="text-sm text-muted-foreground">
+                            Página {currentPage} de {totalPages}
+                        </div>
+                        <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => handlePageChange(currentPage - 1)}
+                            disabled={currentPage === 1}
+                        >
+                            <ChevronLeft className="h-4 w-4" />
+                            <span className="sr-only">Anterior</span>
+                        </Button>
+                        <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => handlePageChange(currentPage + 1)}
+                            disabled={currentPage === totalPages}
+                        >
+                            <ChevronRight className="h-4 w-4" />
+                            <span className="sr-only">Siguiente</span>
+                        </Button>
+                    </div>
                 </div>
                 <DialogFooter>
                     <DialogTrigger asChild>
@@ -588,3 +625,5 @@ export default function AssignmentsPage() {
     </div>
   );
 }
+
+    
