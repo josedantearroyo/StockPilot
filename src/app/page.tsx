@@ -33,55 +33,55 @@ export default function Dashboard() {
     <div>
       <PageHeader
         title="Dashboard"
-        description="An overview of your inventory and assignments."
+        description="Una vista general de tu inventario y asignaciones."
       />
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Items</CardTitle>
+            <CardTitle className="text-sm font-medium">Artículos Totales</CardTitle>
             <Boxes className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{totalItems}</div>
             <p className="text-xs text-muted-foreground">
-              in {inventory.length} unique item types
+              en {inventory.length} tipos de artículos únicos
             </p>
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Assigned Items</CardTitle>
+            <CardTitle className="text-sm font-medium">Artículos Asignados</CardTitle>
             <UserCheck className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{assignedItems}</div>
             <p className="text-xs text-muted-foreground">
-              currently checked out
+              actualmente en uso
             </p>
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
-              Available Items
+              Artículos Disponibles
             </CardTitle>
             <Building className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{availableItems}</div>
             <p className="text-xs text-muted-foreground">
-              in warehouse
+              en almacén
             </p>
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Employees</CardTitle>
+            <CardTitle className="text-sm font-medium">Empleados</CardTitle>
             <User className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{totalEmployees}</div>
-            <p className="text-xs text-muted-foreground">active in system</p>
+            <p className="text-xs text-muted-foreground">activos en el sistema</p>
           </CardContent>
         </Card>
       </div>
@@ -89,22 +89,22 @@ export default function Dashboard() {
         <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium">
-                Tools in Maintenance
+                Herramientas en Mantenimiento
                 </CardTitle>
                 <Wrench className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
                 <div className="text-2xl font-bold">{maintenanceTools}</div>
                 <p className="text-xs text-muted-foreground">
-                tools needing repair
+                herramientas que necesitan reparación
                 </p>
             </CardContent>
         </Card>
         <Card className="col-span-1 lg:col-span-3 bg-gradient-to-br from-primary/10 to-background">
           <CardHeader>
-            <CardTitle>AI-Powered Discrepancy Detection</CardTitle>
+            <CardTitle>Detección de Discrepancias con IA</CardTitle>
             <CardDescription>
-              Use our intelligent tool to automatically identify discrepancies in your inventory based on assignment records and current stock levels.
+              Usa nuestra herramienta inteligente para identificar discrepancias en tu inventario automáticamente, basándose en los registros de asignación y el stock actual.
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -112,7 +112,7 @@ export default function Dashboard() {
               href="/reports/discrepancy"
               className="inline-flex items-center gap-2 text-sm font-medium text-primary hover:underline"
             >
-              Generate Report <ArrowRight className="h-4 w-4" />
+              Generar Reporte <ArrowRight className="h-4 w-4" />
             </Link>
           </CardContent>
         </Card>
@@ -121,3 +121,4 @@ export default function Dashboard() {
   );
 }
 
+    

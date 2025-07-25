@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState } from 'react';
@@ -21,7 +22,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { Terminal, Loader2, ArrowRight } from 'lucide-react';
+import { Terminal, Loader2 } from 'lucide-react';
 import { type InventoryDiscrepancyOutput } from '@/ai/flows/inventory-discrepancy-detection';
 import { runDiscrepancyCheck } from './actions';
 import { useToast } from '@/hooks/use-toast';
@@ -68,15 +69,15 @@ export function DiscrepancyForm({
       <form onSubmit={handleSubmit}>
         <Card>
           <CardHeader>
-            <CardTitle>Input Data</CardTitle>
+            <CardTitle>Datos de Entrada</CardTitle>
             <CardDescription>
-              Provide the inventory and assignment data in JSON format. We've
-              pre-filled it with the current system data for your convenience.
+              Proporcione los datos de inventario y asignación en formato JSON. 
+              Los hemos rellenado previamente con los datos actuales del sistema para su comodidad.
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="grid w-full gap-1.5">
-              <Label htmlFor="inventoryData">Current Inventory Levels</Label>
+              <Label htmlFor="inventoryData">Niveles de Inventario Actuales</Label>
               <Textarea
                 id="inventoryData"
                 value={inventoryData}
@@ -86,7 +87,7 @@ export function DiscrepancyForm({
               />
             </div>
             <div className="grid w-full gap-1.5">
-              <Label htmlFor="assignmentData">Employee Assignments</Label>
+              <Label htmlFor="assignmentData">Asignaciones de Empleados</Label>
               <Textarea
                 id="assignmentData"
                 value={assignmentData}
@@ -101,10 +102,10 @@ export function DiscrepancyForm({
               {loading ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Analyzing...
+                  Analizando...
                 </>
               ) : (
-                'Run Analysis'
+                'Ejecutar Análisis'
               )}
             </Button>
           </CardFooter>
@@ -114,28 +115,28 @@ export function DiscrepancyForm({
       {result && (
         <Card>
           <CardHeader>
-            <CardTitle>Analysis Complete</CardTitle>
+            <CardTitle>Análisis Completo</CardTitle>
             <CardDescription>
-              The AI has analyzed the data and generated the following report.
+              La IA ha analizado los datos y ha generado el siguiente reporte.
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <Alert>
               <Terminal className="h-4 w-4" />
-              <AlertTitle>AI Summary</AlertTitle>
+              <AlertTitle>Resumen de la IA</AlertTitle>
               <AlertDescription>{result.summary}</AlertDescription>
             </Alert>
             <div>
-              <h3 className="font-semibold mb-2">Discrepancies Found</h3>
+              <h3 className="font-semibold mb-2">Discrepancias Encontradas</h3>
               <div className="rounded-md border">
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>Item</TableHead>
-                      <TableHead>Expected</TableHead>
+                      <TableHead>Artículo</TableHead>
+                      <TableHead>Esperado</TableHead>
                       <TableHead>Actual</TableHead>
-                      <TableHead>Difference</TableHead>
-                      <TableHead>Assigned To</TableHead>
+                      <TableHead>Diferencia</TableHead>
+                      <TableHead>Asignado a</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -162,7 +163,7 @@ export function DiscrepancyForm({
                     ) : (
                       <TableRow>
                         <TableCell colSpan={5} className="h-24 text-center">
-                          No discrepancies found.
+                          No se encontraron discrepancias.
                         </TableCell>
                       </TableRow>
                     )}
@@ -176,3 +177,5 @@ export function DiscrepancyForm({
     </div>
   );
 }
+
+    

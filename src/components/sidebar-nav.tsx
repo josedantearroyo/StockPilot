@@ -42,27 +42,27 @@ const links = [
   },
   {
     href: '/inventory',
-    label: 'Inventory',
+    label: 'Inventario',
     icon: Boxes,
   },
   {
     href: '/employees',
-    label: 'Employees',
+    label: 'Empleados',
     icon: Users,
   },
   {
     href: '/assignments',
-    label: 'Assignments',
+    label: 'Asignaciones',
     icon: ClipboardPlus,
   },
   {
     href: '/epp',
-    label: 'EPP Management',
+    label: 'Gestión EPP',
     icon: ShieldCheck,
   },
   {
     href: '/reports/discrepancy',
-    label: 'Discrepancy Report',
+    label: 'Reporte de Discrepancias',
     icon: FileBarChart2,
   },
 ];
@@ -111,24 +111,24 @@ export function SidebarNav() {
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent className="mb-2" side="right" align="end">
-            <DropdownMenuLabel>My Account</DropdownMenuLabel>
+            <DropdownMenuLabel>Mi Cuenta</DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuItem asChild>
               <Link href="/profile">
                 <UserIcon className="mr-2 h-4 w-4" />
-                <span>Profile</span>
+                <span>Perfil</span>
               </Link>
             </DropdownMenuItem>
             <DropdownMenuItem asChild>
               <Link href="/settings">
                 <Settings className="mr-2 h-4 w-4" />
-                <span>Settings</span>
+                <span>Configuración</span>
               </Link>
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem>
               <LogOut className="mr-2 h-4 w-4" />
-              <span>Log out</span>
+              <span>Cerrar Sesión</span>
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
@@ -136,3 +136,5 @@ export function SidebarNav() {
     </>
   );
 }
+
+    

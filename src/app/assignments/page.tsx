@@ -273,7 +273,6 @@ export default function AssignmentsPage() {
   const [selectedTools, setSelectedTools] = useState<Record<string, boolean>>({});
   const { toast } = useToast();
   
-  // State for the review dialog
   const [reviewStatus, setReviewStatus] = useState<'Operativa' | 'Defectuosa'>('Operativa');
   const [defectiveAction, setDefectiveAction] = useState<'quitar' | 'cambiar'>('quitar');
   const [replacementToolId, setReplacementToolId] = useState<string | null>(null);
@@ -335,7 +334,6 @@ export default function AssignmentsPage() {
       description: `${itemsToAssign.length} herramienta(s) asignada(s) a ${selectedEmployee.firstName} ${selectedEmployee.lastName}.`,
     });
 
-    // Reset selection and force re-render
     setSelectedTools({});
     setSelectedEmployee(prev => prev ? {...prev} : null);
   };
@@ -360,7 +358,7 @@ export default function AssignmentsPage() {
             title: 'Revisión Completada',
             description: `${defectiveItem.name} ha sido marcada como operativa.`,
         });
-    } else { // Defectuosa
+    } else { 
         newReviewRecord.actionTaken = defectiveAction === 'cambiar' ? 'cambiada' : 'quitada';
         defectiveItem.status = 'En Mantenimiento';
         const employeeId = defectiveItem.assignedTo;
@@ -392,7 +390,6 @@ export default function AssignmentsPage() {
     }
     defectiveItem.reviewHistory.push(newReviewRecord);
   
-    // Reset review state and force re-render
     setReviewStatus('Operativa');
     setDefectiveAction('quitar');
     setReplacementToolId(null);

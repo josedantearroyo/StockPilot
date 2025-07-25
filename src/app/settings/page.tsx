@@ -14,49 +14,49 @@ export default function SettingsPage() {
     const { toast } = useToast();
 
     const handleSave = () => {
-        toast({ title: 'Success', description: 'Settings saved successfully.' });
+        toast({ title: 'Éxito', description: 'Configuración guardada correctamente.' });
     };
 
   return (
     <div>
-      <PageHeader title="Settings" description="Customize your application experience." />
+      <PageHeader title="Configuración" description="Personaliza tu experiencia en la aplicación." />
       <Card>
         <CardHeader>
-          <CardTitle>General Settings</CardTitle>
-          <CardDescription>Adjust your application preferences below.</CardDescription>
+          <CardTitle>Configuración General</CardTitle>
+          <CardDescription>Ajusta tus preferencias de la aplicación a continuación.</CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
             <div className="space-y-4">
-                <h3 className="text-lg font-medium">Appearance</h3>
+                <h3 className="text-lg font-medium">Apariencia</h3>
                 <div className="space-y-4 rounded-md border p-4">
                     <div className="flex flex-row items-center justify-between">
                         <Label htmlFor="theme" className="flex flex-col space-y-1">
-                            <span>Theme</span>
+                            <span>Tema</span>
                             <span className="font-normal leading-snug text-muted-foreground">
-                                Select the visual theme for the application.
+                                Selecciona el tema visual para la aplicación.
                             </span>
                         </Label>
                         <Select defaultValue="light">
                             <SelectTrigger className="w-[180px]">
-                                <SelectValue placeholder="Select theme" />
+                                <SelectValue placeholder="Seleccionar tema" />
                             </SelectTrigger>
                             <SelectContent>
-                                <SelectItem value="light">Light</SelectItem>
-                                <SelectItem value="dark">Dark</SelectItem>
-                                <SelectItem value="system">System</SelectItem>
+                                <SelectItem value="light">Claro</SelectItem>
+                                <SelectItem value="dark">Oscuro</SelectItem>
+                                <SelectItem value="system">Sistema</SelectItem>
                             </SelectContent>
                         </Select>
                     </div>
                 </div>
             </div>
              <div className="space-y-4">
-                <h3 className="text-lg font-medium">Notifications</h3>
+                <h3 className="text-lg font-medium">Notificaciones</h3>
                 <div className="space-y-4 rounded-md border p-4">
                     <div className="flex flex-row items-center justify-between">
                         <Label htmlFor="email-notifications" className="flex flex-col space-y-1">
-                        <span>Email Notifications</span>
+                        <span>Notificaciones por Correo</span>
                         <span className="font-normal leading-snug text-muted-foreground">
-                            Receive email updates for important events.
+                            Recibe actualizaciones por correo para eventos importantes.
                         </span>
                         </Label>
                         <Switch id="email-notifications" />
@@ -64,9 +64,9 @@ export default function SettingsPage() {
                     <Separator />
                      <div className="flex flex-row items-center justify-between">
                         <Label htmlFor="push-notifications" className="flex flex-col space-y-1">
-                        <span>Push Notifications</span>
+                        <span>Notificaciones Push</span>
                         <span className="font-normal leading-snug text-muted-foreground">
-                            Get push notifications on your devices.
+                            Recibe notificaciones push en tus dispositivos.
                         </span>
                         </Label>
                         <Switch id="push-notifications" disabled />
@@ -75,9 +75,11 @@ export default function SettingsPage() {
             </div>
         </CardContent>
         <CardFooter>
-            <Button onClick={handleSave}>Save Changes</Button>
+            <Button onClick={handleSave}>Guardar Cambios</Button>
         </CardFooter>
       </Card>
     </div>
   );
 }
+
+    

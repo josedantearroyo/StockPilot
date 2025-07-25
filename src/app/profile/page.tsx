@@ -9,7 +9,6 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useToast } from '@/hooks/use-toast';
-import { Separator } from '@/components/ui/separator';
 
 export default function ProfilePage() {
   const { toast } = useToast();
@@ -22,25 +21,23 @@ export default function ProfilePage() {
   const handleProfileUpdate = (e: React.FormEvent) => {
     e.preventDefault();
     if (!name || !email) {
-        toast({ variant: 'destructive', title: 'Error', description: 'Name and email cannot be empty.' });
+        toast({ variant: 'destructive', title: 'Error', description: 'El nombre y el correo no pueden estar vacíos.' });
         return;
     }
-    // Logic to update user profile
-    toast({ title: 'Success', description: 'Profile updated successfully.' });
+    toast({ title: 'Éxito', description: 'Perfil actualizado correctamente.' });
   };
   
   const handlePasswordChange = (e: React.FormEvent) => {
     e.preventDefault();
     if (newPassword !== confirmPassword) {
-      toast({ variant: 'destructive', title: 'Error', description: 'New passwords do not match.' });
+      toast({ variant: 'destructive', title: 'Error', description: 'Las contraseñas nuevas no coinciden.' });
       return;
     }
     if (newPassword.length < 6) {
-        toast({ variant: 'destructive', title: 'Error', description: 'New password must be at least 6 characters long.' });
+        toast({ variant: 'destructive', title: 'Error', description: 'La nueva contraseña debe tener al menos 6 caracteres.' });
         return;
     }
-    // Logic to change password
-    toast({ title: 'Success', description: 'Password changed successfully.' });
+    toast({ title: 'Éxito', description: 'Contraseña cambiada correctamente.' });
     setCurrentPassword('');
     setNewPassword('');
     setConfirmPassword('');
@@ -48,7 +45,7 @@ export default function ProfilePage() {
 
   return (
     <div>
-      <PageHeader title="Profile" description="Manage your account settings and profile information." />
+      <PageHeader title="Perfil" description="Gestiona la configuración de tu cuenta y la información de tu perfil." />
       <div className="grid gap-6 md:grid-cols-3">
         <div className="md:col-span-1">
           <Card>
@@ -61,7 +58,7 @@ export default function ProfilePage() {
                 <CardDescription>{email}</CardDescription>
             </CardHeader>
             <CardContent>
-                <Button className="w-full">Change Avatar</Button>
+                <Button className="w-full">Cambiar Avatar</Button>
             </CardContent>
           </Card>
         </div>
@@ -69,46 +66,46 @@ export default function ProfilePage() {
             <Card>
                 <form onSubmit={handleProfileUpdate}>
                     <CardHeader>
-                        <CardTitle>Personal Information</CardTitle>
-                        <CardDescription>Update your personal details here.</CardDescription>
+                        <CardTitle>Información Personal</CardTitle>
+                        <CardDescription>Actualiza tus datos personales aquí.</CardDescription>
                     </CardHeader>
                     <CardContent className="space-y-4">
                         <div className="space-y-2">
-                            <Label htmlFor="name">Full Name</Label>
+                            <Label htmlFor="name">Nombre Completo</Label>
                             <Input id="name" value={name} onChange={(e) => setName(e.target.value)} />
                         </div>
                         <div className="space-y-2">
-                            <Label htmlFor="email">Email Address</Label>
+                            <Label htmlFor="email">Correo Electrónico</Label>
                             <Input id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
                         </div>
                     </CardContent>
                     <CardFooter>
-                        <Button type="submit">Save Changes</Button>
+                        <Button type="submit">Guardar Cambios</Button>
                     </CardFooter>
                 </form>
             </Card>
              <Card>
                 <form onSubmit={handlePasswordChange}>
                     <CardHeader>
-                        <CardTitle>Change Password</CardTitle>
-                        <CardDescription>Update your password here. Make sure it's a strong one.</CardDescription>
+                        <CardTitle>Cambiar Contraseña</CardTitle>
+                        <CardDescription>Actualiza tu contraseña aquí. Asegúrate de que sea segura.</CardDescription>
                     </CardHeader>
                     <CardContent className="space-y-4">
                         <div className="space-y-2">
-                            <Label htmlFor="current-password">Current Password</Label>
+                            <Label htmlFor="current-password">Contraseña Actual</Label>
                             <Input id="current-password" type="password" value={currentPassword} onChange={(e) => setCurrentPassword(e.target.value)} />
                         </div>
                          <div className="space-y-2">
-                            <Label htmlFor="new-password">New Password</Label>
+                            <Label htmlFor="new-password">Nueva Contraseña</Label>
                             <Input id="new-password" type="password" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} />
                         </div>
                          <div className="space-y-2">
-                            <Label htmlFor="confirm-password">Confirm New Password</Label>
+                            <Label htmlFor="confirm-password">Confirmar Nueva Contraseña</Label>
                             <Input id="confirm-password" type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} />
                         </div>
                     </CardContent>
                     <CardFooter>
-                        <Button type="submit">Update Password</Button>
+                        <Button type="submit">Actualizar Contraseña</Button>
                     </CardFooter>
                 </form>
             </Card>
@@ -117,3 +114,5 @@ export default function ProfilePage() {
     </div>
   );
 }
+
+    

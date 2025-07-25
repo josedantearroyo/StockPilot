@@ -7,9 +7,7 @@ import { employees as initialEmployees } from '@/lib/data';
 import { EmployeesTable } from './employees-table';
 import { Card, CardContent } from '@/components/ui/card';
 import { AddEmployeeDialog } from './add-employee-dialog';
-import { Button } from '@/components/ui/button';
 import type { Employee } from '@/lib/types';
-import { PlusCircle } from 'lucide-react';
 
 
 const ITEMS_PER_PAGE = 5;
@@ -60,3 +58,5 @@ export default function EmployeesPage() {
     </div>
   );
 }
+
+    

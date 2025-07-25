@@ -44,7 +44,7 @@ export function EmployeesTable({ data, currentPage, totalPages, onPageChange }: 
             ) : (
               <TableRow>
                 <TableCell colSpan={3} className="h-24 text-center">
-                  No results.
+                  No hay resultados.
                 </TableCell>
               </TableRow>
             )}
@@ -53,7 +53,7 @@ export function EmployeesTable({ data, currentPage, totalPages, onPageChange }: 
       </div>
       <div className="flex items-center justify-end space-x-2 py-4">
       <div className="text-sm text-muted-foreground">
-          Page {currentPage} of {totalPages}
+          Página {currentPage} de {totalPages}
         </div>
         <Button
             variant="outline"
@@ -62,7 +62,7 @@ export function EmployeesTable({ data, currentPage, totalPages, onPageChange }: 
             disabled={currentPage === 1}
         >
             <ChevronLeft className="h-4 w-4" />
-            <span className="sr-only">Previous</span>
+            <span className="sr-only">Anterior</span>
         </Button>
         <Button
             variant="outline"
@@ -71,9 +71,11 @@ export function EmployeesTable({ data, currentPage, totalPages, onPageChange }: 
             disabled={currentPage === totalPages}
         >
             <ChevronRight className="h-4 w-4" />
-            <span className="sr-only">Next</span>
+            <span className="sr-only">Siguiente</span>
         </Button>
       </div>
     </div>
   );
 }
+
+    

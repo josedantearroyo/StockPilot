@@ -57,30 +57,30 @@ export function AddItemDialog({ onAddItem }: { onAddItem: (item: Omit<Item, 'id'
       <DialogTrigger asChild>
         <Button size="sm" className="ml-auto gap-1">
             <PlusCircle className="h-4 w-4" />
-            Add Item
+            Añadir Artículo
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Add New Item</DialogTitle>
+          <DialogTitle>Añadir Nuevo Artículo</DialogTitle>
           <DialogDescription>
-            Enter the details of the new item to add it to the inventory.
+            Introduzca los detalles del nuevo artículo para añadirlo al inventario.
           </DialogDescription>
         </DialogHeader>
         <div className="grid gap-4 py-4">
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="name" className="text-right">
-              Name
+              Nombre
             </Label>
-            <Input id="name" placeholder="e.g. Power Drill" className="col-span-3" value={name} onChange={(e) => setName(e.target.value)} />
+            <Input id="name" placeholder="Ej: Taladro Eléctrico" className="col-span-3" value={name} onChange={(e) => setName(e.target.value)} />
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="type" className="text-right">
-              Type
+              Tipo
             </Label>
             <Select value={type} onValueChange={(value) => setType(value as ItemType)}>
               <SelectTrigger className="col-span-3">
-                <SelectValue placeholder="Select a type" />
+                <SelectValue placeholder="Seleccione un tipo" />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="Herramienta">Herramienta</SelectItem>
@@ -91,7 +91,7 @@ export function AddItemDialog({ onAddItem }: { onAddItem: (item: Omit<Item, 'id'
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="quantity" className="text-right">
-              Quantity
+              Cantidad
             </Label>
             <Input id="quantity" type="number" value={quantity} onChange={(e) => setQuantity(parseInt(e.target.value, 10))} min="1" className="col-span-3" />
           </div>
@@ -100,9 +100,11 @@ export function AddItemDialog({ onAddItem }: { onAddItem: (item: Omit<Item, 'id'
             <DialogClose asChild>
                 <Button variant="ghost">Cancelar</Button>
             </DialogClose>
-          <Button onClick={handleSubmit}>Save Item</Button>
+          <Button onClick={handleSubmit}>Guardar Artículo</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
   );
 }
+
+    

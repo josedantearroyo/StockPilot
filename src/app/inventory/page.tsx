@@ -4,9 +4,7 @@
 import { useState } from 'react';
 import { PageHeader } from '@/components/page-header';
 import { InventoryTable } from './inventory-table';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { PlusCircle } from 'lucide-react';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { AddItemDialog } from './add-item-dialog';
 import {
   Select,
@@ -54,14 +52,14 @@ export default function InventoryPage() {
 
   const handleFilterChange = (value: ItemType | 'all') => {
     setTypeFilter(value);
-    setCurrentPage(1); // Reset to first page on filter change
+    setCurrentPage(1); 
   }
 
   return (
     <div>
       <PageHeader
-        title="Inventory"
-        description="Manage your tools, materials, and personal protective equipment."
+        title="Inventario"
+        description="Gestiona tus herramientas, materiales y equipos de protección personal."
       >
         <AddItemDialog onAddItem={handleAddItem} />
       </PageHeader>
@@ -69,16 +67,16 @@ export default function InventoryPage() {
       <Card>
         <CardHeader>
             <div className="flex items-center gap-4">
-                <Label htmlFor="type-filter">Filter by Type</Label>
+                <Label htmlFor="type-filter">Filtrar por Tipo</Label>
                 <Select
                 value={typeFilter}
                 onValueChange={(value) => handleFilterChange(value as ItemType | 'all')}
                 >
                 <SelectTrigger id="type-filter" className="w-[180px]">
-                    <SelectValue placeholder="Select type" />
+                    <SelectValue placeholder="Seleccione un tipo" />
                 </SelectTrigger>
                 <SelectContent>
-                    <SelectItem value="all">All Types</SelectItem>
+                    <SelectItem value="all">Todos los Tipos</SelectItem>
                     <SelectItem value="Herramienta">Herramienta</SelectItem>
                     <SelectItem value="Material">Material</SelectItem>
                     <SelectItem value="EPP">EPP</SelectItem>
@@ -98,3 +96,5 @@ export default function InventoryPage() {
     </div>
   );
 }
+
+    

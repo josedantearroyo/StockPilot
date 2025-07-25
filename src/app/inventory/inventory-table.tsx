@@ -26,7 +26,7 @@ export function InventoryTable({ data, currentPage, totalPages, onPageChange }: 
   const getEmployeeName = (employeeId?: string) => {
     if (!employeeId) return '-';
     const employee = employees.find((e) => e.id === employeeId);
-    return employee ? `${employee.firstName} ${employee.lastName}` : 'Unknown';
+    return employee ? `${employee.firstName} ${employee.lastName}` : 'Desconocido';
   };
 
   const getStatusVariant = (status: Item['status']) => {
@@ -62,11 +62,11 @@ export function InventoryTable({ data, currentPage, totalPages, onPageChange }: 
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Name</TableHead>
-              <TableHead>Type</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead className="hidden md:table-cell">Quantity</TableHead>
-              <TableHead className="hidden lg:table-cell">Assigned To</TableHead>
+              <TableHead>Nombre</TableHead>
+              <TableHead>Tipo</TableHead>
+              <TableHead>Estado</TableHead>
+              <TableHead className="hidden md:table-cell">Cantidad</TableHead>
+              <TableHead className="hidden lg:table-cell">Asignado a</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -94,7 +94,7 @@ export function InventoryTable({ data, currentPage, totalPages, onPageChange }: 
             ) : (
               <TableRow>
                 <TableCell colSpan={5} className="h-24 text-center">
-                  No results.
+                  No hay resultados.
                 </TableCell>
               </TableRow>
             )}
@@ -103,7 +103,7 @@ export function InventoryTable({ data, currentPage, totalPages, onPageChange }: 
       </div>
       <div className="flex items-center justify-end space-x-2 py-4">
         <div className="text-sm text-muted-foreground">
-          Page {currentPage} of {totalPages}
+          Página {currentPage} de {totalPages}
         </div>
         <Button
             variant="outline"
@@ -112,7 +112,7 @@ export function InventoryTable({ data, currentPage, totalPages, onPageChange }: 
             disabled={currentPage === 1}
         >
             <ChevronLeft className="h-4 w-4" />
-            <span className="sr-only">Previous</span>
+            <span className="sr-only">Anterior</span>
         </Button>
         <Button
             variant="outline"
@@ -121,9 +121,11 @@ export function InventoryTable({ data, currentPage, totalPages, onPageChange }: 
             disabled={currentPage === totalPages}
         >
             <ChevronRight className="h-4 w-4" />
-            <span className="sr-only">Next</span>
+            <span className="sr-only">Siguiente</span>
         </Button>
       </div>
     </div>
   );
 }
+
+    

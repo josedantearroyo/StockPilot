@@ -243,10 +243,6 @@ export default function EppManagementPage() {
         }
     });
 
-    console.log(
-      `Asignando ${itemsToAssign.join(', ')} a ${selectedEmployee.firstName} ${selectedEmployee.lastName} en la fecha ${assignmentDate}`
-    );
-
     toast({
       title: 'Asignación Exitosa',
       description: `${itemsToAssign.length} EPP(s) asignado(s) a ${selectedEmployee.firstName} ${selectedEmployee.lastName}.`,
@@ -270,7 +266,6 @@ export default function EppManagementPage() {
         delete item.changeHistory;
     });
 
-    console.log(`Todos los EPPs devueltos por ${employee.firstName} ${employee.lastName}`);
     toast({
       title: 'Devolución Exitosa',
       description: `Se han devuelto ${assigned.length} EPPs de ${employee.firstName} ${employee.lastName}.`,
@@ -288,7 +283,6 @@ export default function EppManagementPage() {
         }
         item.changeHistory.push({ date: newChangeDate });
 
-        console.log(`EPP ${item.name} cambiado para ${employee.firstName} ${employee.lastName} en ${newChangeDate}`);
         toast({
             title: 'Cambio Exitoso',
             description: `Se ha cambiado el EPP ${item.name} para ${employee.firstName} ${employee.lastName}.`
@@ -424,3 +418,5 @@ export default function EppManagementPage() {
     </div>
   );
 }
+
+    
