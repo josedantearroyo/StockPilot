@@ -6,7 +6,7 @@ import { PageHeader } from '@/components/page-header';
 import { InventoryTable } from './inventory-table';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { PlusCircle, Boxes, CheckCircle, AlertTriangle, Wrench } from 'lucide-react';
+import { PlusCircle } from 'lucide-react';
 import { AddItemDialog } from './add-item-dialog';
 import {
   Select,
@@ -47,11 +47,6 @@ export default function InventoryPage() {
     setCurrentPage(1); // Reset to first page on filter change
   }
 
-  const totalItems = inventoryData.reduce((sum, item) => sum + item.quantity, 0);
-  const availableItems = inventoryData.filter(item => item.status === 'Disponible').length;
-  const assignedItems = inventoryData.filter(item => item.status === 'Asignado').length;
-  const maintenanceItems = inventoryData.filter(item => item.status === 'En Mantenimiento').length;
-
   return (
     <div>
       <PageHeader
@@ -66,45 +61,6 @@ export default function InventoryPage() {
         </AddItemDialog>
       </PageHeader>
       
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mb-6">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Items</CardTitle>
-            <Boxes className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{totalItems}</div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Available</CardTitle>
-            <CheckCircle className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{availableItems}</div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Assigned</CardTitle>
-            <AlertTriangle className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{assignedItems}</div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">In Maintenance</CardTitle>
-            <Wrench className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{maintenanceItems}</div>
-          </CardContent>
-        </Card>
-      </div>
-
       <Card>
         <CardHeader>
             <div className="flex items-center gap-4">
