@@ -38,15 +38,15 @@ export default function EmployeesPage() {
 
 
   return (
-    <div>
+    <div className="space-y-8">
       <PageHeader
         title="Empleados"
         description="Ver y gestionar los empleados de la empresa."
       >
         <AddEmployeeDialog onAddEmployee={handleAddEmployee} />
       </PageHeader>
-      <Card>
-        <CardContent className="pt-6">
+      <Card className="hover:shadow-lg transition-shadow duration-200">
+        <CardContent className="p-0">
           <EmployeesTable
             data={paginatedEmployees}
             currentPage={currentPage}

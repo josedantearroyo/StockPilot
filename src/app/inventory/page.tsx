@@ -56,7 +56,7 @@ export default function InventoryPage() {
   }
 
   return (
-    <div>
+    <div className="space-y-8">
       <PageHeader
         title="Inventario"
         description="Gestiona tus herramientas, materiales y equipos de protección personal."
@@ -64,15 +64,15 @@ export default function InventoryPage() {
         <AddItemDialog onAddItem={handleAddItem} />
       </PageHeader>
       
-      <Card>
-        <CardHeader>
+      <Card className="hover:shadow-lg transition-shadow duration-200">
+        <CardHeader className="border-b border-border/50">
             <div className="flex items-center gap-4">
-                <Label htmlFor="type-filter">Filtrar por Tipo</Label>
+                <Label htmlFor="type-filter" className="text-sm font-medium text-foreground">Filtrar por Tipo</Label>
                 <Select
                 value={typeFilter}
                 onValueChange={(value) => handleFilterChange(value as ItemType | 'all')}
                 >
-                <SelectTrigger id="type-filter" className="w-[180px]">
+                <SelectTrigger id="type-filter" className="w-[180px] hover:bg-accent/50 transition-colors duration-200">
                     <SelectValue placeholder="Seleccione un tipo" />
                 </SelectTrigger>
                 <SelectContent>
@@ -84,7 +84,7 @@ export default function InventoryPage() {
                 </Select>
           </div>
         </CardHeader>
-        <CardContent>
+        <CardContent className="p-0">
           <InventoryTable 
             data={paginatedInventory} 
             currentPage={currentPage}
