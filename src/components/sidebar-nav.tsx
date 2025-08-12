@@ -72,7 +72,7 @@ export function SidebarNav() {
 
   return (
     <>
-      <SidebarHeader>
+      <SidebarHeader className="border-b border-sidebar-border/50">
         <Logo />
       </SidebarHeader>
       <SidebarContent>
@@ -83,6 +83,7 @@ export function SidebarNav() {
                 asChild
                 isActive={pathname.startsWith(link.href) && (link.href !== '/' || pathname === '/')}
                 tooltip={link.label}
+                className="transition-colors duration-200 hover:bg-sidebar-accent/50"
               >
                 <Link href={link.href}>
                   <link.icon />
@@ -93,16 +94,16 @@ export function SidebarNav() {
           ))}
         </SidebarMenu>
       </SidebarContent>
-      <SidebarFooter>
+      <SidebarFooter className="border-t border-sidebar-border/50">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button
               variant="ghost"
-              className="group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:size-8 flex w-full justify-start gap-2 rounded-md p-2 text-left text-sm"
+              className="group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:size-8 flex w-full justify-start gap-2 rounded-md p-2 text-left text-sm hover:bg-sidebar-accent/50 transition-colors duration-200"
             >
               <Avatar className="size-6">
                 <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
-                <AvatarFallback>CN</AvatarFallback>
+                <AvatarFallback className="bg-primary/10 text-primary">CN</AvatarFallback>
               </Avatar>
               <div className="flex flex-col items-start group-data-[collapsible=icon]:hidden">
                 <span className="font-medium">Admin</span>
@@ -113,20 +114,20 @@ export function SidebarNav() {
           <DropdownMenuContent className="mb-2" side="right" align="end">
             <DropdownMenuLabel>Mi Cuenta</DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem asChild>
+            <DropdownMenuItem asChild className="hover:bg-accent/50 transition-colors duration-150">
               <Link href="/profile">
                 <UserIcon className="mr-2 h-4 w-4" />
                 <span>Perfil</span>
               </Link>
             </DropdownMenuItem>
-            <DropdownMenuItem asChild>
+            <DropdownMenuItem asChild className="hover:bg-accent/50 transition-colors duration-150">
               <Link href="/settings">
                 <Settings className="mr-2 h-4 w-4" />
                 <span>Configuración</span>
               </Link>
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
+            <DropdownMenuItem className="hover:bg-destructive/10 hover:text-destructive transition-colors duration-150">
               <LogOut className="mr-2 h-4 w-4" />
               <span>Cerrar Sesión</span>
             </DropdownMenuItem>

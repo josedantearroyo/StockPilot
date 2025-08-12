@@ -42,14 +42,14 @@ export function InventoryTable({ data, currentPage, totalPages, onPageChange }: 
     }
   };
   
-  const getTypeVariant = (type: Item['type']) => {
+  const getTypeVariant = (type: Item['type']): "default" | "secondary" | "destructive" | "outline" => {
     switch (type) {
       case 'Herramienta':
         return 'outline';
       case 'Material':
-        return 'outline';
+        return 'secondary';
       case 'EPP':
-        return 'outline';
+        return 'default';
       default:
         return 'outline';
     }
@@ -58,42 +58,42 @@ export function InventoryTable({ data, currentPage, totalPages, onPageChange }: 
 
   return (
     <div className="w-full">
-      <div className="rounded-md border">
+      <div className="rounded-md border border-border/50">
         <Table>
           <TableHeader>
-            <TableRow>
-              <TableHead>Nombre</TableHead>
-              <TableHead>Tipo</TableHead>
-              <TableHead>Estado</TableHead>
-              <TableHead className="hidden md:table-cell">Cantidad</TableHead>
-              <TableHead className="hidden lg:table-cell">Asignado a</TableHead>
+            <TableRow className="hover:bg-muted/50">
+              <TableHead className="font-semibold text-foreground">Nombre</TableHead>
+              <TableHead className="font-semibold text-foreground">Tipo</TableHead>
+              <TableHead className="font-semibold text-foreground">Estado</TableHead>
+              <TableHead className="hidden md:table-cell font-semibold text-foreground">Cantidad</TableHead>
+              <TableHead className="hidden lg:table-cell font-semibold text-foreground">Asignado a</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {data.length ? (
               data.map((item) => (
-                <TableRow key={item.id}>
-                  <TableCell className="font-medium">{item.name}</TableCell>
+                <TableRow key={item.id} className="hover:bg-muted/30 transition-colors duration-150">
+                  <TableCell className="font-medium text-foreground">{item.name}</TableCell>
                   <TableCell>
-                    <Badge variant={getTypeVariant(item.type)}>{item.type}</Badge>
+                    <Badge variant={getTypeVariant(item.type)} className="hover:bg-primary/10 transition-colors duration-150">{item.type}</Badge>
                   </TableCell>
                   <TableCell>
                     <div className="flex items-center gap-2">
-                        <Badge variant={getStatusVariant(item.status)}>
+                        <Badge variant={getStatusVariant(item.status)} className="transition-colors duration-150">
                         {item.status}
                         </Badge>
                         {item.status === 'En Mantenimiento' && (
-                            <Badge variant="secondary" className="px-1.5">{item.quantity}</Badge>
+                            <Badge variant="secondary" className="px-1.5 transition-colors duration-150">{item.quantity}</Badge>
                         )}
                     </div>
                   </TableCell>
-                  <TableCell className="hidden md:table-cell">{item.quantity}</TableCell>
-                  <TableCell className="hidden lg:table-cell">{getEmployeeName(item.assignedTo)}</TableCell>
+                  <TableCell className="hidden md:table-cell text-foreground">{item.quantity}</TableCell>
+                  <TableCell className="hidden lg:table-cell text-foreground">{getEmployeeName(item.assignedTo)}</TableCell>
                 </TableRow>
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={5} className="h-24 text-center">
+                <TableCell colSpan={5} className="h-24 text-center text-muted-foreground">
                   No hay resultados.
                 </TableCell>
               </TableRow>
@@ -101,28 +101,32 @@ export function InventoryTable({ data, currentPage, totalPages, onPageChange }: 
           </TableBody>
         </Table>
       </div>
-      <div className="flex items-center justify-end space-x-2 py-4">
+      <div className="flex items-center justify-between p-4 border-t border-border/50">
         <div className="text-sm text-muted-foreground">
           Página {currentPage} de {totalPages}
         </div>
-        <Button
-            variant="outline"
-            size="sm"
-            onClick={() => onPageChange(currentPage - 1)}
-            disabled={currentPage === 1}
-        >
-            <ChevronLeft className="h-4 w-4" />
-            <span className="sr-only">Anterior</span>
-        </Button>
-        <Button
-            variant="outline"
-            size="sm"
-            onClick={() => onPageChange(currentPage + 1)}
-            disabled={currentPage === totalPages}
-        >
-            <ChevronRight className="h-4 w-4" />
-            <span className="sr-only">Siguiente</span>
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button
+              variant="outline"
+              size="sm"
+              onClick={() => onPageChange(currentPage - 1)}
+              disabled={currentPage === 1}
+              className="hover:bg-accent/50 transition-colors duration-200"
+          >
+              <ChevronLeft className="h-4 w-4" />
+              <span className="sr-only">Anterior</span>
+          </Button>
+          <Button
+              variant="outline"
+              size="sm"
+              onClick={() => onPageChange(currentPage + 1)}
+              disabled={currentPage === totalPages}
+              className="hover:bg-accent/50 transition-colors duration-200"
+          >
+              <ChevronRight className="h-4 w-4" />
+              <span className="sr-only">Siguiente</span>
+          </Button>
+        </div>
       </div>
     </div>
   );
